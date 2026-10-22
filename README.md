@@ -29,6 +29,14 @@ Ordered sets and maps are red-black trees. Unordered containers are chained
 hash tables. The priority queue is a binary heap. `cadt_sort` is an introsort;
 `cadt_stable_sort` is a mergesort.
 
+## Engineering Highlights
+
+- **Broad C23 container implementation:** Generic vectors, deques, lists, associative containers, strings, bitsets, optional values, spans, and sorting/search algorithms ([container catalog](#cadt--c-abstract-data-types)).
+- **Data-structure choices:** Ordered maps/sets use red-black trees; unordered variants use chained hash tables; priority queues use binary heaps; sorting includes introsort and stable mergesort ([overview](#cadt--c-abstract-data-types)).
+- **Explicit lifetime rules:** `cadt_type` supplies element-size, copy/destroy, comparison, and hash callbacks; optional custom allocators and documented iterator invalidation keep ownership visible to callers ([ownership contracts](#ownership)).
+- **Verification:** `make test` builds and runs C unit tests with AddressSanitizer/UndefinedBehaviorSanitizer and exercises standalone examples, including a word-count output check ([Makefile](Makefile), [test harness](tests/test_main.c)).
+- **Reusable build outputs:** Make and CMake produce an installable static library with public C headers; application examples demonstrate API use ([build](#build), [examples](#example)).
+
 ## Build
 
 cadt requires ISO C23: GCC 14, Clang 18, or newer. The CMake build needs CMake 3.21 or newer, which is the first release that accepts `CMAKE_C_STANDARD 23`.
