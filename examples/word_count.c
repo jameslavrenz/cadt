@@ -57,25 +57,20 @@ static int note(cadt_umap *counts, const char *word)
 
 int main(void)
 {
-    cadt_type key_type;
-    cadt_type value_type;
-    cadt_type pointer_type;
+    cadt_type key_type = {
+        .size = sizeof(char *),
+        .copy = copy_cstr,
+        .destroy = destroy_cstr,
+        .compare = cmp_cstr,
+        .hash = hash_cstr,
+    };
+    cadt_type value_type = {.size = sizeof(int)};
+    cadt_type pointer_type = {.size = sizeof(char *)};
     cadt_umap *counts;
     cadt_string *word;
     cadt_vector *keys;
     cadt_umap_iter it;
     int ch;
-
-    memset(&key_type, 0, sizeof(key_type));
-    key_type.size = sizeof(char *);
-    key_type.copy = copy_cstr;
-    key_type.destroy = destroy_cstr;
-    key_type.compare = cmp_cstr;
-    key_type.hash = hash_cstr;
-    memset(&value_type, 0, sizeof(value_type));
-    value_type.size = sizeof(int);
-    memset(&pointer_type, 0, sizeof(pointer_type));
-    pointer_type.size = sizeof(char *);
 
     counts = cadt_umap_create(&key_type, &value_type, nullptr);
     word = cadt_string_create(nullptr);

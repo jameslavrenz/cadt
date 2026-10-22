@@ -22,8 +22,8 @@ typedef struct cadt_set_iter {
     const void *owner;
 } cadt_set_iter;
 
-cadt_set *cadt_set_create(const cadt_type *key, const cadt_allocator *alloc);
-cadt_set *cadt_multiset_create(const cadt_type *key, const cadt_allocator *alloc);
+[[nodiscard]] cadt_set *cadt_set_create(const cadt_type *key, const cadt_allocator *alloc);
+[[nodiscard]] cadt_set *cadt_multiset_create(const cadt_type *key, const cadt_allocator *alloc);
 void cadt_set_destroy(cadt_set *set);
 
 size_t cadt_set_size(const cadt_set *set);
@@ -32,11 +32,11 @@ bool cadt_set_is_multi(const cadt_set *set);
 void cadt_set_clear(cadt_set *set);
 
 /* CADT_ERR_EXISTS when a unique set already contains an equivalent key. */
-cadt_status cadt_set_insert(cadt_set *set, const void *key);
+[[nodiscard]] cadt_status cadt_set_insert(cadt_set *set, const void *key);
 /* Number of elements removed (all equivalents). */
 size_t cadt_set_erase(cadt_set *set, const void *key);
 /* Removes one equivalent element. out may be nullptr. */
-cadt_status cadt_set_erase_one(cadt_set *set, const void *key, void *out);
+[[nodiscard]] cadt_status cadt_set_erase_one(cadt_set *set, const void *key, void *out);
 
 bool cadt_set_contains(const cadt_set *set, const void *key);
 size_t cadt_set_count(const cadt_set *set, const void *key);
@@ -58,7 +58,7 @@ void *cadt_set_min(const cadt_set *set);
 void *cadt_set_max(const cadt_set *set);
 
 /* CADT_OK when red-black and ordering invariants hold. */
-cadt_status cadt_set_validate(const cadt_set *set);
+[[nodiscard]] cadt_status cadt_set_validate(const cadt_set *set);
 
 #ifdef __cplusplus
 }

@@ -97,7 +97,7 @@ static void *track_realloc(void *ptr, size_t old_size, size_t new_size, void *ct
 
 void track_init(track_state *state, cadt_allocator *alloc)
 {
-    memset(state, 0, sizeof(*state));
+    *state = (track_state){};
     alloc->alloc = track_alloc;
     alloc->realloc = track_realloc;
     alloc->free = track_free;

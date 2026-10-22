@@ -53,10 +53,10 @@ static void default_free(void *ptr, [[maybe_unused]] void *ctx)
 const cadt_allocator *cadt_default_allocator(void)
 {
     static const cadt_allocator allocator = {
-        default_alloc,
-        default_realloc,
-        default_free,
-        nullptr
+        .alloc = default_alloc,
+        .realloc = default_realloc,
+        .free = default_free,
+        .ctx = nullptr,
     };
     return &allocator;
 }
@@ -167,12 +167,14 @@ uint64_t cadt_type_hash(const cadt_type *type, const void *elem)
 uint64_t cadt_hash_bytes(const void *data, size_t length)
 {
     const unsigned char *bytes = (const unsigned char *)data;
-    uint64_t hash = 14695981039346656037ull;
+    constexpr uint64_t offset = 14'695'981'039'346'656'037ull;
+    constexpr uint64_t prime = 1'099'511'628'211ull;
+    uint64_t hash = offset;
     size_t i;
 
     for (i = 0; i < length; i++) {
         hash ^= (uint64_t)bytes[i];
-        hash *= 1099511628211ull;
+        hash *= prime;
     }
     return hash;
 }

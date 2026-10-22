@@ -25,7 +25,7 @@ typedef struct cadt_flist_iter {
     cadt_flist_kind kind;
 } cadt_flist_iter;
 
-cadt_flist *cadt_flist_create(const cadt_type *type, const cadt_allocator *alloc);
+[[nodiscard]] cadt_flist *cadt_flist_create(const cadt_type *type, const cadt_allocator *alloc);
 void cadt_flist_destroy(cadt_flist *list);
 
 size_t cadt_flist_size(const cadt_flist *list);
@@ -41,11 +41,11 @@ cadt_flist_iter cadt_flist_next(const cadt_flist *list, cadt_flist_iter it);
 bool cadt_flist_iter_eq(cadt_flist_iter a, cadt_flist_iter b);
 void *cadt_flist_iter_data(cadt_flist_iter it);
 
-cadt_status cadt_flist_push_front(cadt_flist *list, const void *elem);
-cadt_status cadt_flist_pop_front(cadt_flist *list, void *out);
-cadt_status cadt_flist_insert_after(cadt_flist *list, cadt_flist_iter pos,
+[[nodiscard]] cadt_status cadt_flist_push_front(cadt_flist *list, const void *elem);
+[[nodiscard]] cadt_status cadt_flist_pop_front(cadt_flist *list, void *out);
+[[nodiscard]] cadt_status cadt_flist_insert_after(cadt_flist *list, cadt_flist_iter pos,
                                     const void *elem, cadt_flist_iter *out_it);
-cadt_status cadt_flist_erase_after(cadt_flist *list, cadt_flist_iter pos, void *out);
+[[nodiscard]] cadt_status cadt_flist_erase_after(cadt_flist *list, cadt_flist_iter pos, void *out);
 
 void cadt_flist_reverse(cadt_flist *list);
 void cadt_flist_sort(cadt_flist *list);

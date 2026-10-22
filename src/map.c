@@ -16,8 +16,6 @@ static cadt_map *create_map(const cadt_type *key, const cadt_type *value, bool m
                             const cadt_allocator *alloc)
 {
     cadt_map *map;
-    cadt_tree_cfg cfg;
-    cadt_type elem;
 
     if (key == nullptr || key->compare == nullptr) {
         return nullptr;
@@ -33,17 +31,18 @@ static cadt_map *create_map(const cadt_type *key, const cadt_type *value, bool m
         cadt_xfree(alloc, map);
         return nullptr;
     }
-    memset(&elem, 0, sizeof(elem));
-    elem.size = map->kv.elem_size;
-    elem.destroy = cadt_kv_elem_destroy;
-    elem.ctx = &map->kv;
-    memset(&cfg, 0, sizeof(cfg));
-    cfg.elem = elem;
-    cfg.key_offset = 0;
-    cfg.key_size = key->size;
-    cfg.key_cmp = key->compare;
-    cfg.key_ctx = key->ctx;
-    cfg.multi = multi;
+    cadt_type elem = {
+        .size = map->kv.elem_size,
+        .destroy = cadt_kv_elem_destroy,
+        .ctx = &map->kv,
+    };
+    cadt_tree_cfg cfg = {
+        .elem = elem,
+        .key_size = key->size,
+        .key_cmp = key->compare,
+        .key_ctx = key->ctx,
+        .multi = multi,
+    };
     map->tree = cadt_tree_create(&cfg, alloc);
     if (map->tree == nullptr) {
         cadt_xfree(alloc, map);

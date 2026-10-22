@@ -26,7 +26,7 @@ typedef struct cadt_hash_iter {
     void *node;
 } cadt_hash_iter;
 
-cadt_hash *cadt_hash_create(const cadt_hash_cfg *cfg, const cadt_allocator *alloc);
+[[nodiscard]] cadt_hash *cadt_hash_create(const cadt_hash_cfg *cfg, const cadt_allocator *alloc);
 void cadt_hash_destroy(cadt_hash *table);
 void cadt_hash_clear(cadt_hash *table);
 
@@ -34,7 +34,7 @@ size_t cadt_hash_size(const cadt_hash *table);
 size_t cadt_hash_buckets(const cadt_hash *table);
 bool cadt_hash_is_multi(const cadt_hash *table);
 
-cadt_status cadt_hash_insert(cadt_hash *table, const void *elem);
+[[nodiscard]] cadt_status cadt_hash_insert(cadt_hash *table, const void *elem);
 size_t cadt_hash_erase(cadt_hash *table, const void *key);
 void *cadt_hash_find(const cadt_hash *table, const void *key);
 size_t cadt_hash_count(const cadt_hash *table, const void *key);
@@ -44,6 +44,6 @@ cadt_hash_iter cadt_hash_end(const cadt_hash *table);
 cadt_hash_iter cadt_hash_next(cadt_hash_iter it);
 void *cadt_hash_iter_data(cadt_hash_iter it);
 
-cadt_status cadt_hash_validate(const cadt_hash *table);
+[[nodiscard]] cadt_status cadt_hash_validate(const cadt_hash *table);
 
 #endif /* CADT_HASHTABLE_H */

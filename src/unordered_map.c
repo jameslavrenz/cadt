@@ -16,8 +16,6 @@ static cadt_umap *create_map(const cadt_type *key, const cadt_type *value, bool 
                              const cadt_allocator *alloc)
 {
     cadt_umap *map;
-    cadt_hash_cfg cfg;
-    cadt_type elem;
 
     alloc = cadt_alloc_or_default(alloc);
     map = (cadt_umap *)cadt_xalloc(alloc, sizeof(*map));
@@ -30,18 +28,19 @@ static cadt_umap *create_map(const cadt_type *key, const cadt_type *value, bool 
         cadt_xfree(alloc, map);
         return nullptr;
     }
-    memset(&elem, 0, sizeof(elem));
-    elem.size = map->kv.elem_size;
-    elem.destroy = cadt_kv_elem_destroy;
-    elem.ctx = &map->kv;
-    memset(&cfg, 0, sizeof(cfg));
-    cfg.elem = elem;
-    cfg.key_offset = 0;
-    cfg.key_size = key->size;
-    cfg.key_cmp = key->compare;
-    cfg.key_hash = key->hash;
-    cfg.key_ctx = key->ctx;
-    cfg.multi = multi;
+    cadt_type elem = {
+        .size = map->kv.elem_size,
+        .destroy = cadt_kv_elem_destroy,
+        .ctx = &map->kv,
+    };
+    cadt_hash_cfg cfg = {
+        .elem = elem,
+        .key_size = key->size,
+        .key_cmp = key->compare,
+        .key_hash = key->hash,
+        .key_ctx = key->ctx,
+        .multi = multi,
+    };
     map->table = cadt_hash_create(&cfg, alloc);
     if (map->table == nullptr) {
         cadt_xfree(alloc, map);

@@ -14,7 +14,6 @@ struct cadt_uset {
 static cadt_uset *create_set(const cadt_type *key, bool multi, const cadt_allocator *alloc)
 {
     cadt_uset *set;
-    cadt_hash_cfg cfg;
 
     if (cadt_type_check(key) != CADT_OK) {
         return nullptr;
@@ -24,14 +23,14 @@ static cadt_uset *create_set(const cadt_type *key, bool multi, const cadt_alloca
     if (set == nullptr) {
         return nullptr;
     }
-    memset(&cfg, 0, sizeof(cfg));
-    cfg.elem = *key;
-    cfg.key_offset = 0;
-    cfg.key_size = key->size;
-    cfg.key_cmp = key->compare;
-    cfg.key_hash = key->hash;
-    cfg.key_ctx = key->ctx;
-    cfg.multi = multi;
+    cadt_hash_cfg cfg = {
+        .elem = *key,
+        .key_size = key->size,
+        .key_cmp = key->compare,
+        .key_hash = key->hash,
+        .key_ctx = key->ctx,
+        .multi = multi,
+    };
     set->alloc = alloc;
     set->table = cadt_hash_create(&cfg, alloc);
     if (set->table == nullptr) {

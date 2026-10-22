@@ -11,16 +11,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define CADT_VERSION_MAJOR 1
 #define CADT_VERSION_MINOR 0
 #define CADT_VERSION_PATCH 0
 
 /* Sentinel index returned by searches that do not find a match. */
-#define CADT_NPOS ((size_t)-1)
+#ifdef __cplusplus
+constexpr size_t CADT_NPOS = static_cast<size_t>(-1);
+#else
+constexpr size_t CADT_NPOS = (size_t)-1;
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum cadt_status {
     CADT_OK = 0,

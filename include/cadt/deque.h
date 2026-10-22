@@ -16,26 +16,26 @@ extern "C" {
 
 typedef struct cadt_deque cadt_deque;
 
-cadt_deque *cadt_deque_create(const cadt_type *type, const cadt_allocator *alloc);
+[[nodiscard]] cadt_deque *cadt_deque_create(const cadt_type *type, const cadt_allocator *alloc);
 void cadt_deque_destroy(cadt_deque *deq);
 
 size_t cadt_deque_size(const cadt_deque *deq);
 size_t cadt_deque_capacity(const cadt_deque *deq);
 bool cadt_deque_empty(const cadt_deque *deq);
 
-cadt_status cadt_deque_reserve(cadt_deque *deq, size_t capacity);
+[[nodiscard]] cadt_status cadt_deque_reserve(cadt_deque *deq, size_t capacity);
 void cadt_deque_clear(cadt_deque *deq);
 
 void *cadt_deque_at(const cadt_deque *deq, size_t index);
 void *cadt_deque_front(const cadt_deque *deq);
 void *cadt_deque_back(const cadt_deque *deq);
 
-cadt_status cadt_deque_push_back(cadt_deque *deq, const void *elem);
-cadt_status cadt_deque_push_front(cadt_deque *deq, const void *elem);
-cadt_status cadt_deque_pop_back(cadt_deque *deq, void *out);
-cadt_status cadt_deque_pop_front(cadt_deque *deq, void *out);
-cadt_status cadt_deque_insert(cadt_deque *deq, size_t index, const void *elem);
-cadt_status cadt_deque_erase(cadt_deque *deq, size_t index, void *out);
+[[nodiscard]] cadt_status cadt_deque_push_back(cadt_deque *deq, const void *elem);
+[[nodiscard]] cadt_status cadt_deque_push_front(cadt_deque *deq, const void *elem);
+[[nodiscard]] cadt_status cadt_deque_pop_back(cadt_deque *deq, void *out);
+[[nodiscard]] cadt_status cadt_deque_pop_front(cadt_deque *deq, void *out);
+[[nodiscard]] cadt_status cadt_deque_insert(cadt_deque *deq, size_t index, const void *elem);
+[[nodiscard]] cadt_status cadt_deque_erase(cadt_deque *deq, size_t index, void *out);
 
 #ifdef __cplusplus
 }

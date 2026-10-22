@@ -1,7 +1,6 @@
 #include "cadt.h"
 
 #include <stdio.h>
-#include <string.h>
 
 static int cmp_int(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
@@ -18,7 +17,10 @@ static int fail(const char *message)
 
 int main(void)
 {
-    cadt_type type;
+    cadt_type type = {
+        .size = sizeof(int),
+        .compare = cmp_int,
+    };
     cadt_vector *numbers;
     cadt_set *unique;
     cadt_stack *stack;
@@ -28,10 +30,6 @@ int main(void)
     int i;
     int out;
     int previous;
-
-    memset(&type, 0, sizeof(type));
-    type.size = sizeof(int);
-    type.compare = cmp_int;
 
     numbers = cadt_vector_create(&type, nullptr);
     if (numbers == nullptr) {

@@ -21,9 +21,9 @@ typedef struct cadt_map_iter {
     const void *owner;
 } cadt_map_iter;
 
-cadt_map *cadt_map_create(const cadt_type *key, const cadt_type *value,
+[[nodiscard]] cadt_map *cadt_map_create(const cadt_type *key, const cadt_type *value,
                           const cadt_allocator *alloc);
-cadt_map *cadt_multimap_create(const cadt_type *key, const cadt_type *value,
+[[nodiscard]] cadt_map *cadt_multimap_create(const cadt_type *key, const cadt_type *value,
                                const cadt_allocator *alloc);
 void cadt_map_destroy(cadt_map *map);
 
@@ -32,9 +32,9 @@ bool cadt_map_empty(const cadt_map *map);
 bool cadt_map_is_multi(const cadt_map *map);
 void cadt_map_clear(cadt_map *map);
 
-cadt_status cadt_map_insert(cadt_map *map, const void *key, const void *value);
+[[nodiscard]] cadt_status cadt_map_insert(cadt_map *map, const void *key, const void *value);
 /* Insert or overwrite the value of an equivalent key. Unique maps only. */
-cadt_status cadt_map_put(cadt_map *map, const void *key, const void *value);
+[[nodiscard]] cadt_status cadt_map_put(cadt_map *map, const void *key, const void *value);
 size_t cadt_map_erase(cadt_map *map, const void *key);
 
 bool cadt_map_contains(const cadt_map *map, const void *key);
@@ -53,7 +53,7 @@ void *cadt_map_iter_value(const cadt_map *map, cadt_map_iter it);
 cadt_map_iter cadt_map_lower_bound(const cadt_map *map, const void *key);
 cadt_map_iter cadt_map_upper_bound(const cadt_map *map, const void *key);
 
-cadt_status cadt_map_validate(const cadt_map *map);
+[[nodiscard]] cadt_status cadt_map_validate(const cadt_map *map);
 
 #ifdef __cplusplus
 }

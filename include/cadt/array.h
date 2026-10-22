@@ -21,7 +21,7 @@ typedef struct cadt_array cadt_array;
  * fill nullptr zero-fills and is rejected when the type has a destructor.
  * count 0 yields an empty array.
  */
-cadt_array *cadt_array_create(const cadt_type *type, size_t count, const void *fill,
+[[nodiscard]] cadt_array *cadt_array_create(const cadt_type *type, size_t count, const void *fill,
                               const cadt_allocator *alloc);
 void cadt_array_destroy(cadt_array *arr);
 
@@ -32,7 +32,7 @@ void *cadt_array_data(const cadt_array *arr);
 void *cadt_array_front(const cadt_array *arr);
 void *cadt_array_back(const cadt_array *arr);
 cadt_span cadt_array_as_span(const cadt_array *arr);
-cadt_status cadt_array_set(cadt_array *arr, size_t index, const void *elem);
+[[nodiscard]] cadt_status cadt_array_set(cadt_array *arr, size_t index, const void *elem);
 
 #ifdef __cplusplus
 }

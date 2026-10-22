@@ -8,7 +8,6 @@
 
 #include "internal.h"
 
-#include <stdalign.h>
 #include <string.h>
 
 typedef struct cadt_kv {
@@ -37,7 +36,7 @@ static inline void cadt_kv_elem_destroy(void *elem, void *ctx)
     cadt_type_destroy(&kv->value, (unsigned char *)elem + kv->value_offset);
 }
 
-static inline cadt_status cadt_kv_pack(const cadt_allocator *alloc, const cadt_kv *kv,
+[[nodiscard]] static inline cadt_status cadt_kv_pack(const cadt_allocator *alloc, const cadt_kv *kv,
                                        const void *key, const void *value,
                                        unsigned char **out)
 {

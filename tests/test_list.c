@@ -89,9 +89,10 @@ void test_list(void)
     }
     cadt_list_destroy(list);
 
-    memset(&pairs, 0, sizeof(pairs));
-    pairs.size = sizeof(pair_item);
-    pairs.compare = cmp_pair;
+    pairs = (cadt_type){
+        .size = sizeof(pair_item),
+        .compare = cmp_pair,
+    };
     list = cadt_list_create(&pairs, &alloc);
     items[0].key = 2;
     items[0].seq = 0;

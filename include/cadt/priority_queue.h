@@ -16,7 +16,7 @@ extern "C" {
 
 typedef struct cadt_pqueue cadt_pqueue;
 
-cadt_pqueue *cadt_pqueue_create(const cadt_type *type, bool max_heap,
+[[nodiscard]] cadt_pqueue *cadt_pqueue_create(const cadt_type *type, bool max_heap,
                                 const cadt_allocator *alloc);
 void cadt_pqueue_destroy(cadt_pqueue *pq);
 
@@ -26,8 +26,8 @@ void cadt_pqueue_clear(cadt_pqueue *pq);
 
 /* nullptr when empty. Invalidated by push and pop. */
 void *cadt_pqueue_top(const cadt_pqueue *pq);
-cadt_status cadt_pqueue_push(cadt_pqueue *pq, const void *elem);
-cadt_status cadt_pqueue_pop(cadt_pqueue *pq, void *out);
+[[nodiscard]] cadt_status cadt_pqueue_push(cadt_pqueue *pq, const void *elem);
+[[nodiscard]] cadt_status cadt_pqueue_pop(cadt_pqueue *pq, void *out);
 
 #ifdef __cplusplus
 }

@@ -22,8 +22,8 @@ const cadt_allocator *cadt_alloc_or_default(const cadt_allocator *alloc);
 bool cadt_mul_size(size_t a, size_t b, size_t *out);
 bool cadt_add_size(size_t a, size_t b, size_t *out);
 
-cadt_status cadt_type_check(const cadt_type *type);
-cadt_status cadt_type_copy(const cadt_type *type, void *dst, const void *src);
+[[nodiscard]] cadt_status cadt_type_check(const cadt_type *type);
+[[nodiscard]] cadt_status cadt_type_copy(const cadt_type *type, void *dst, const void *src);
 void cadt_type_destroy(const cadt_type *type, void *elem);
 int cadt_type_compare(const cadt_type *type, const void *a, const void *b);
 uint64_t cadt_type_hash(const cadt_type *type, const void *elem);

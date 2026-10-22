@@ -283,11 +283,12 @@ void test_map(void)
     CHECK(cadt_map_size(multi) == 1);
     cadt_map_destroy(multi);
 
-    memset(&str_key, 0, sizeof(str_key));
-    str_key.size = sizeof(char *);
-    str_key.copy = copy_cstr;
-    str_key.destroy = destroy_cstr;
-    str_key.compare = cmp_cstr;
+    str_key = (cadt_type){
+        .size = sizeof(char *),
+        .copy = copy_cstr,
+        .destroy = destroy_cstr,
+        .compare = cmp_cstr,
+    };
     g_live_strings = 0;
     map = cadt_map_create(&str_key, &value_type, &alloc);
     word = "red";
@@ -407,12 +408,13 @@ void test_unordered(void)
     CHECK(cadt_umap_get(map, &key) == nullptr);
     cadt_umap_destroy(map);
 
-    memset(&str_key, 0, sizeof(str_key));
-    str_key.size = sizeof(char *);
-    str_key.copy = copy_cstr;
-    str_key.destroy = destroy_cstr;
-    str_key.compare = cmp_cstr;
-    str_key.hash = hash_cstr;
+    str_key = (cadt_type){
+        .size = sizeof(char *),
+        .copy = copy_cstr,
+        .destroy = destroy_cstr,
+        .compare = cmp_cstr,
+        .hash = hash_cstr,
+    };
     g_live_strings = 0;
     map = cadt_umap_create(&str_key, &value_type, &alloc);
     word = "alpha";

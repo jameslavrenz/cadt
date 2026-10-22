@@ -17,9 +17,9 @@ extern "C" {
 typedef bool (*cadt_pred_fn)(const void *elem, void *ctx);
 typedef void (*cadt_for_each_fn)(void *elem, void *ctx);
 
-cadt_status cadt_sort(void *base, size_t count, size_t elem_size,
+[[nodiscard]] cadt_status cadt_sort(void *base, size_t count, size_t elem_size,
                       cadt_compare_fn cmp, void *ctx);
-cadt_status cadt_stable_sort(void *base, size_t count, size_t elem_size,
+[[nodiscard]] cadt_status cadt_stable_sort(void *base, size_t count, size_t elem_size,
                              cadt_compare_fn cmp, void *ctx);
 bool cadt_is_sorted(const void *base, size_t count, size_t elem_size,
                     cadt_compare_fn cmp, void *ctx);

@@ -28,12 +28,10 @@ static inline int cmp_int(const void *a, const void *b, [[maybe_unused]] void *c
 
 static inline cadt_type type_int(void)
 {
-    cadt_type type;
-
-    memset(&type, 0, sizeof(type));
-    type.size = sizeof(int);
-    type.compare = cmp_int;
-    return type;
+    return (cadt_type){
+        .size = sizeof(int),
+        .compare = cmp_int,
+    };
 }
 
 static inline uint32_t test_rnd(uint32_t *state)
