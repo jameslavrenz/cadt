@@ -1,0 +1,11 @@
+build/
+*.o
+*.a
+*.dSYM/
+.DS_Store
+cmake-build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+Testing/
