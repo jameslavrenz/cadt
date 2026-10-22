@@ -1,5 +1,5 @@
 CC ?= cc
-CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Wshadow -Wstrict-prototypes -Werror
+CFLAGS ?= -std=c23 -Wall -Wextra -Wpedantic -Wshadow -Wstrict-prototypes -Werror
 CPPFLAGS := -Iinclude -Isrc
 BUILD := build
 

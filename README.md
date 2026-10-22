@@ -1,6 +1,6 @@
 # cadt — C Abstract Data Types
 
-cadt is a C11 library of generic containers and algorithms in the spirit of the
+cadt is a C23 library of generic containers and algorithms in the spirit of the
 C++ standard library. C has no templates, so each container stores values
 described by a `cadt_type`: the element size, and optional copy, destroy,
 compare, and hash callbacks.
@@ -30,6 +30,8 @@ hash tables. The priority queue is a binary heap. `cadt_sort` is an introsort;
 `cadt_stable_sort` is a mergesort.
 
 ## Build
+
+cadt requires ISO C23: GCC 14, Clang 18, or newer. The CMake build needs CMake 3.21 or newer, which is the first release that accepts `CMAKE_C_STANDARD 23`.
 
 ```sh
 make

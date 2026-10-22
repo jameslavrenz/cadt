@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: MIT
  *
  * Umbrella header. Containers follow the C++ standard library, implemented
- * in ISO C11 with an explicit element-type descriptor instead of templates.
+ * in ISO C23 with an explicit element-type descriptor instead of templates.
  */
 #ifndef CADT_H
 #define CADT_H

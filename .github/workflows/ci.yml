@@ -6,7 +6,9 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # ubuntu-latest is still Ubuntu 24.04 on some runners, whose default GCC 13
+    # rejects -std=c23. Ubuntu 26.04 ships GCC 15.
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - name: Build, test, and run examples
