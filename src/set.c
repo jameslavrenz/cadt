@@ -16,13 +16,13 @@ static cadt_set *create_set(const cadt_type *key, bool multi, const cadt_allocat
     cadt_set *set;
     cadt_tree_cfg cfg;
 
-    if (key == NULL || key->compare == NULL || cadt_type_check(key) != CADT_OK) {
-        return NULL;
+    if (key == nullptr || key->compare == nullptr || cadt_type_check(key) != CADT_OK) {
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     set = (cadt_set *)cadt_xalloc(alloc, sizeof(*set));
-    if (set == NULL) {
-        return NULL;
+    if (set == nullptr) {
+        return nullptr;
     }
     memset(&cfg, 0, sizeof(cfg));
     cfg.elem = *key;
@@ -33,9 +33,9 @@ static cadt_set *create_set(const cadt_type *key, bool multi, const cadt_allocat
     cfg.multi = multi;
     set->alloc = alloc;
     set->tree = cadt_tree_create(&cfg, alloc);
-    if (set->tree == NULL) {
+    if (set->tree == nullptr) {
         cadt_xfree(alloc, set);
-        return NULL;
+        return nullptr;
     }
     return set;
 }
@@ -61,7 +61,7 @@ cadt_set *cadt_multiset_create(const cadt_type *key, const cadt_allocator *alloc
 
 void cadt_set_destroy(cadt_set *set)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return;
     }
     cadt_tree_destroy(set->tree);
@@ -70,7 +70,7 @@ void cadt_set_destroy(cadt_set *set)
 
 size_t cadt_set_size(const cadt_set *set)
 {
-    return set == NULL ? 0 : cadt_tree_size(set->tree);
+    return set == nullptr ? 0 : cadt_tree_size(set->tree);
 }
 
 bool cadt_set_empty(const cadt_set *set)
@@ -80,19 +80,19 @@ bool cadt_set_empty(const cadt_set *set)
 
 bool cadt_set_is_multi(const cadt_set *set)
 {
-    return set != NULL && cadt_tree_is_multi(set->tree);
+    return set != nullptr && cadt_tree_is_multi(set->tree);
 }
 
 void cadt_set_clear(cadt_set *set)
 {
-    if (set != NULL) {
+    if (set != nullptr) {
         cadt_tree_clear(set->tree);
     }
 }
 
 cadt_status cadt_set_insert(cadt_set *set, const void *key)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_tree_insert(set->tree, key);
@@ -100,12 +100,12 @@ cadt_status cadt_set_insert(cadt_set *set, const void *key)
 
 size_t cadt_set_erase(cadt_set *set, const void *key)
 {
-    return set == NULL ? 0 : cadt_tree_erase(set->tree, key);
+    return set == nullptr ? 0 : cadt_tree_erase(set->tree, key);
 }
 
 cadt_status cadt_set_erase_one(cadt_set *set, const void *key, void *out)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_tree_erase_one(set->tree, key, out);
@@ -113,35 +113,35 @@ cadt_status cadt_set_erase_one(cadt_set *set, const void *key, void *out)
 
 bool cadt_set_contains(const cadt_set *set, const void *key)
 {
-    return cadt_set_find(set, key) != NULL;
+    return cadt_set_find(set, key) != nullptr;
 }
 
 size_t cadt_set_count(const cadt_set *set, const void *key)
 {
-    return set == NULL ? 0 : cadt_tree_count(set->tree, key);
+    return set == nullptr ? 0 : cadt_tree_count(set->tree, key);
 }
 
 void *cadt_set_find(const cadt_set *set, const void *key)
 {
-    return set == NULL ? NULL : cadt_tree_find(set->tree, key);
+    return set == nullptr ? nullptr : cadt_tree_find(set->tree, key);
 }
 
 cadt_set_iter cadt_set_begin(const cadt_set *set)
 {
-    if (set == NULL) {
-        return iter_of(NULL, NULL);
+    if (set == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(set, cadt_tree_minimum(set->tree));
 }
 
 cadt_set_iter cadt_set_end(const cadt_set *set)
 {
-    return iter_of(set, NULL);
+    return iter_of(set, nullptr);
 }
 
 cadt_set_iter cadt_set_next(cadt_set_iter it)
 {
-    if (it.node != NULL) {
+    if (it.node != nullptr) {
         it.node = cadt_tree_next(it.node);
     }
     return it;
@@ -151,10 +151,10 @@ cadt_set_iter cadt_set_prev(cadt_set_iter it)
 {
     const cadt_set *set = (const cadt_set *)it.owner;
 
-    if (set == NULL) {
+    if (set == nullptr) {
         return it;
     }
-    if (it.node == NULL) {
+    if (it.node == nullptr) {
         it.node = cadt_tree_maximum(set->tree);
         return it;
     }
@@ -174,33 +174,33 @@ void *cadt_set_iter_data(cadt_set_iter it)
 
 cadt_set_iter cadt_set_lower_bound(const cadt_set *set, const void *key)
 {
-    if (set == NULL) {
-        return iter_of(NULL, NULL);
+    if (set == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(set, cadt_tree_lower(set->tree, key));
 }
 
 cadt_set_iter cadt_set_upper_bound(const cadt_set *set, const void *key)
 {
-    if (set == NULL) {
-        return iter_of(NULL, NULL);
+    if (set == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(set, cadt_tree_upper(set->tree, key));
 }
 
 void *cadt_set_min(const cadt_set *set)
 {
-    return set == NULL ? NULL : cadt_tree_minimum(set->tree);
+    return set == nullptr ? nullptr : cadt_tree_minimum(set->tree);
 }
 
 void *cadt_set_max(const cadt_set *set)
 {
-    return set == NULL ? NULL : cadt_tree_maximum(set->tree);
+    return set == nullptr ? nullptr : cadt_tree_maximum(set->tree);
 }
 
 cadt_status cadt_set_validate(const cadt_set *set)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_tree_validate(set->tree);

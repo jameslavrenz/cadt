@@ -3,16 +3,13 @@
 static int g_dtor;
 static int g_copies;
 
-static void dtor_int(void *elem, void *ctx)
+static void dtor_int([[maybe_unused]] void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)elem;
-    (void)ctx;
     g_dtor++;
 }
 
-static cadt_status copy_limited(void *dst, const void *src, void *ctx)
+static cadt_status copy_limited(void *dst, const void *src, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     if (g_copies <= 0) {
         return CADT_ERR_NOMEM;
     }
@@ -29,9 +26,9 @@ static void expect_vector(cadt_vector *vec, const int *values, size_t count)
     CHECK(cadt_vector_empty(vec) == (count == 0));
     for (i = 0; i < count; i++) {
         int *slot = (int *)cadt_vector_at(vec, i);
-        CHECK(slot != NULL && *slot == values[i]);
+        CHECK(slot != nullptr && *slot == values[i]);
     }
-    CHECK(cadt_vector_at(vec, count) == NULL);
+    CHECK(cadt_vector_at(vec, count) == nullptr);
 }
 
 void test_vector(void)
@@ -49,17 +46,17 @@ void test_vector(void)
     int i;
 
     track_init(&state, &alloc);
-    CHECK(cadt_vector_create(NULL, &alloc) == NULL);
+    CHECK(cadt_vector_create(nullptr, &alloc) == nullptr);
     type = type_int();
     type.size = 0;
-    CHECK(cadt_vector_create(&type, &alloc) == NULL);
+    CHECK(cadt_vector_create(&type, &alloc) == nullptr);
 
     type = type_int();
     vec = cadt_vector_create(&type, &alloc);
-    CHECK(vec != NULL);
+    CHECK(vec != nullptr);
     value = 0;
-    CHECK(cadt_vector_push_back(NULL, &value) == CADT_ERR_INVALID);
-    CHECK(cadt_vector_pop_back(vec, NULL) == CADT_ERR_EMPTY);
+    CHECK(cadt_vector_push_back(nullptr, &value) == CADT_ERR_INVALID);
+    CHECK(cadt_vector_pop_back(vec, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 40; i++) {
         value = i;
         CHECK(cadt_vector_push_back(vec, &value) == CADT_OK);
@@ -90,7 +87,7 @@ void test_vector(void)
     CHECK(cadt_vector_set(vec, 0, &value) == CADT_OK);
     oracle[0] = 99;
     CHECK(*(int *)cadt_vector_find(vec, &value) == 99);
-    CHECK(cadt_vector_resize(vec, 10, NULL) == CADT_OK);
+    CHECK(cadt_vector_resize(vec, 10, nullptr) == CADT_OK);
     expect_vector(vec, oracle, 10);
     value = 3;
     CHECK(cadt_vector_resize(vec, 12, &value) == CADT_OK);
@@ -114,7 +111,7 @@ void test_vector(void)
         value = i;
         CHECK(cadt_vector_push_back(vec, &value) == CADT_OK);
     }
-    CHECK(cadt_vector_erase(vec, 1, NULL) == CADT_OK);
+    CHECK(cadt_vector_erase(vec, 1, nullptr) == CADT_OK);
     CHECK(g_dtor == 1);
     CHECK(cadt_vector_pop_back(vec, &out) == CADT_OK);
     CHECK(out == 2);
@@ -137,7 +134,7 @@ void test_vector(void)
     CHECK(cadt_vector_insert(vec, 0, &value) == CADT_ERR_NOMEM);
     CHECK(cadt_vector_size(vec) == 1);
     CHECK(*(int *)cadt_vector_at(vec, 0) == 4);
-    CHECK(cadt_vector_resize(vec, 3, NULL) == CADT_ERR_INVALID);
+    CHECK(cadt_vector_resize(vec, 3, nullptr) == CADT_ERR_INVALID);
     cadt_vector_destroy(vec);
 
     osize = 0;
@@ -150,7 +147,7 @@ void test_vector(void)
             CHECK(cadt_vector_push_back(vec, &value) == CADT_OK);
             oracle[osize++] = value;
         } else if (roll == 1 && osize > 0) {
-            CHECK(cadt_vector_pop_back(vec, NULL) == CADT_OK);
+            CHECK(cadt_vector_pop_back(vec, nullptr) == CADT_OK);
             osize--;
         } else if (roll == 2 && osize < 48) {
             size_t index = (size_t)(test_rnd(&rng) % (uint32_t)(osize + 1u));
@@ -161,7 +158,7 @@ void test_vector(void)
             osize++;
         } else if (osize > 0) {
             size_t index = (size_t)(test_rnd(&rng) % (uint32_t)osize);
-            CHECK(cadt_vector_erase(vec, index, NULL) == CADT_OK);
+            CHECK(cadt_vector_erase(vec, index, nullptr) == CADT_OK);
             memmove(oracle + index, oracle + index + 1, (osize - index - 1u) * sizeof(int));
             osize--;
         }
@@ -169,10 +166,10 @@ void test_vector(void)
     }
     cadt_vector_destroy(vec);
 
-    plain = cadt_vector_create(&type, NULL);
+    plain = cadt_vector_create(&type, nullptr);
     value = 1;
-    CHECK(plain != NULL && cadt_vector_push_back(plain, &value) == CADT_OK);
+    CHECK(plain != nullptr && cadt_vector_push_back(plain, &value) == CADT_OK);
     cadt_vector_destroy(plain);
-    cadt_vector_destroy(NULL);
+    cadt_vector_destroy(nullptr);
     CHECK(!track_leaked(&state));
 }

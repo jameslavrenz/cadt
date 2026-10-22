@@ -2,10 +2,8 @@
 
 static int g_dtor;
 
-static void dtor_int(void *elem, void *ctx)
+static void dtor_int([[maybe_unused]] void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)elem;
-    (void)ctx;
     g_dtor++;
 }
 
@@ -27,10 +25,10 @@ void test_adapters(void)
 
     track_init(&state, &alloc);
     type = type_int();
-    CHECK(cadt_stack_create(&(cadt_type){0}, &alloc) == NULL);
+    CHECK(cadt_stack_create(&(cadt_type){}, &alloc) == nullptr);
     stack = cadt_stack_create(&type, &alloc);
-    CHECK(stack != NULL && cadt_stack_empty(stack));
-    CHECK(cadt_stack_pop(stack, NULL) == CADT_ERR_EMPTY);
+    CHECK(stack != nullptr && cadt_stack_empty(stack));
+    CHECK(cadt_stack_pop(stack, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 5; i++) {
         value = i;
         CHECK(cadt_stack_push(stack, &value) == CADT_OK);
@@ -49,7 +47,7 @@ void test_adapters(void)
         value = i;
         CHECK(cadt_stack_push(stack, &value) == CADT_OK);
     }
-    CHECK(cadt_stack_pop(stack, NULL) == CADT_OK);
+    CHECK(cadt_stack_pop(stack, nullptr) == CADT_OK);
     CHECK(g_dtor == 1);
     CHECK(cadt_stack_pop(stack, &out) == CADT_OK);
     CHECK(out == 1 && g_dtor == 1);
@@ -58,8 +56,8 @@ void test_adapters(void)
 
     type = type_int();
     queue = cadt_queue_create(&type, &alloc);
-    CHECK(queue != NULL);
-    CHECK(cadt_queue_pop(queue, NULL) == CADT_ERR_EMPTY);
+    CHECK(queue != nullptr);
+    CHECK(cadt_queue_pop(queue, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 4; i++) {
         value = i * 10;
         CHECK(cadt_queue_push(queue, &value) == CADT_OK);
@@ -73,11 +71,11 @@ void test_adapters(void)
     cadt_queue_destroy(queue);
 
     type = type_int();
-    CHECK(cadt_pqueue_create(&(cadt_type){.size = sizeof(int)}, true, &alloc) == NULL);
+    CHECK(cadt_pqueue_create(&(cadt_type){.size = sizeof(int)}, true, &alloc) == nullptr);
     heap = cadt_pqueue_create(&type, true, &alloc);
     min_heap = cadt_pqueue_create(&type, false, &alloc);
-    CHECK(heap != NULL && min_heap != NULL);
-    CHECK(cadt_pqueue_pop(heap, NULL) == CADT_ERR_EMPTY);
+    CHECK(heap != nullptr && min_heap != nullptr);
+    CHECK(cadt_pqueue_pop(heap, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 64; i++) {
         pushed[i] = (int)(test_rnd(&rng) % 200u) - 50;
         CHECK(cadt_pqueue_push(heap, &pushed[i]) == CADT_OK);
@@ -105,7 +103,7 @@ void test_adapters(void)
         value = i;
         CHECK(cadt_pqueue_push(heap, &value) == CADT_OK);
     }
-    CHECK(cadt_pqueue_pop(heap, NULL) == CADT_OK);
+    CHECK(cadt_pqueue_pop(heap, nullptr) == CADT_OK);
     CHECK(g_dtor == 1);
     CHECK(cadt_pqueue_pop(heap, &out) == CADT_OK);
     CHECK(g_dtor == 1);

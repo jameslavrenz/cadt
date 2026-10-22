@@ -26,13 +26,13 @@ void cadt_tree_clear(cadt_tree *tree);
 size_t cadt_tree_size(const cadt_tree *tree);
 bool cadt_tree_is_multi(const cadt_tree *tree);
 
-/* Copies elem (or memcpy when copy is NULL). Caller keeps the source. */
+/* Copies elem (or memcpy when copy is nullptr). Caller keeps the source. */
 cadt_status cadt_tree_insert(cadt_tree *tree, const void *elem);
 
 /* Erase every element whose key compares equal. Returns how many were removed. */
 size_t cadt_tree_erase(cadt_tree *tree, const void *key);
 
-/* Erase one match. CADT_ERR_NOT_FOUND when absent. out may be NULL. */
+/* Erase one match. CADT_ERR_NOT_FOUND when absent. out may be nullptr. */
 cadt_status cadt_tree_erase_one(cadt_tree *tree, const void *key, void *out);
 
 void *cadt_tree_find(const cadt_tree *tree, const void *key);
@@ -42,7 +42,7 @@ void *cadt_tree_upper(const cadt_tree *tree, const void *key);
 void *cadt_tree_minimum(const cadt_tree *tree);
 void *cadt_tree_maximum(const cadt_tree *tree);
 
-/* Element-data pointers. NULL stays NULL. Walking off either end yields NULL. */
+/* Element-data pointers. nullptr stays nullptr. Walking off either end yields nullptr. */
 void *cadt_tree_next(void *elem);
 void *cadt_tree_prev(void *elem);
 

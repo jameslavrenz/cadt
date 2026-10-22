@@ -20,7 +20,7 @@ static unsigned char *at_ptr(const sort_env *env, size_t index)
 
 static int cmp_index(const sort_env *env, size_t i, size_t j)
 {
-    if (env->cmp != NULL) {
+    if (env->cmp != nullptr) {
         return env->cmp(at_ptr(env, i), at_ptr(env, j), env->ctx);
     }
     return memcmp(at_ptr(env, i), at_ptr(env, j), env->elem_size);
@@ -28,7 +28,7 @@ static int cmp_index(const sort_env *env, size_t i, size_t j)
 
 static int cmp_key(const sort_env *env, size_t index, const void *key)
 {
-    if (env->cmp != NULL) {
+    if (env->cmp != nullptr) {
         return env->cmp(at_ptr(env, index), key, env->ctx);
     }
     return memcmp(at_ptr(env, index), key, env->elem_size);
@@ -178,14 +178,14 @@ static void introsort(sort_env *env, size_t lo, size_t hi, int depth)
 static cadt_status prepare(sort_env *env, void *base, size_t count, size_t elem_size,
                            cadt_compare_fn cmp, void *ctx)
 {
-    if (elem_size == 0 || (base == NULL && count > 0)) {
+    if (elem_size == 0 || (base == nullptr && count > 0)) {
         return CADT_ERR_INVALID;
     }
     env->base = (unsigned char *)base;
     env->elem_size = elem_size;
     env->cmp = cmp;
     env->ctx = ctx;
-    env->tmp = NULL;
+    env->tmp = nullptr;
     return CADT_OK;
 }
 
@@ -264,7 +264,7 @@ cadt_status cadt_stable_sort(void *base, size_t count, size_t elem_size,
         return CADT_ERR_OVERFLOW;
     }
     env.tmp = (unsigned char *)malloc(bytes);
-    if (env.tmp == NULL) {
+    if (env.tmp == nullptr) {
         return CADT_ERR_NOMEM;
     }
     merge_sort(&env, 0, count);
@@ -296,7 +296,7 @@ size_t cadt_lower_bound(const void *base, size_t count, size_t elem_size,
     size_t lo = 0;
     size_t hi = count;
 
-    if (key == NULL || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
+    if (key == nullptr || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
         return 0;
     }
     while (lo < hi) {
@@ -318,7 +318,7 @@ size_t cadt_upper_bound(const void *base, size_t count, size_t elem_size,
     size_t lo = 0;
     size_t hi = count;
 
-    if (key == NULL || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
+    if (key == nullptr || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
         return 0;
     }
     while (lo < hi) {
@@ -354,15 +354,15 @@ void *cadt_find(const void *base, size_t count, size_t elem_size,
     sort_env env;
     size_t i;
 
-    if (key == NULL || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
-        return NULL;
+    if (key == nullptr || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
+        return nullptr;
     }
     for (i = 0; i < count; i++) {
         if (cmp_key(&env, i, key) == 0) {
             return at_ptr(&env, i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void *cadt_find_if(const void *base, size_t count, size_t elem_size,
@@ -371,8 +371,8 @@ void *cadt_find_if(const void *base, size_t count, size_t elem_size,
     unsigned char *bytes = (unsigned char *)base;
     size_t i;
 
-    if (base == NULL || elem_size == 0 || pred == NULL) {
-        return NULL;
+    if (base == nullptr || elem_size == 0 || pred == nullptr) {
+        return nullptr;
     }
     for (i = 0; i < count; i++) {
         void *elem = bytes + i * elem_size;
@@ -381,7 +381,7 @@ void *cadt_find_if(const void *base, size_t count, size_t elem_size,
             return elem;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 size_t cadt_count(const void *base, size_t count, size_t elem_size,
@@ -391,7 +391,7 @@ size_t cadt_count(const void *base, size_t count, size_t elem_size,
     size_t i;
     size_t found = 0;
 
-    if (key == NULL || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
+    if (key == nullptr || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
         return 0;
     }
     for (i = 0; i < count; i++) {
@@ -409,7 +409,7 @@ size_t cadt_count_if(const void *base, size_t count, size_t elem_size,
     size_t i;
     size_t found = 0;
 
-    if (base == NULL || elem_size == 0 || pred == NULL) {
+    if (base == nullptr || elem_size == 0 || pred == nullptr) {
         return 0;
     }
     for (i = 0; i < count; i++) {
@@ -425,7 +425,7 @@ void cadt_for_each(void *base, size_t count, size_t elem_size, cadt_for_each_fn 
     unsigned char *bytes = (unsigned char *)base;
     size_t i;
 
-    if (base == NULL || elem_size == 0 || fn == NULL) {
+    if (base == nullptr || elem_size == 0 || fn == nullptr) {
         return;
     }
     for (i = 0; i < count; i++) {
@@ -438,7 +438,7 @@ void cadt_reverse(void *base, size_t count, size_t elem_size)
     unsigned char *bytes = (unsigned char *)base;
     size_t i;
 
-    if (base == NULL || elem_size == 0 || count < 2u) {
+    if (base == nullptr || elem_size == 0 || count < 2u) {
         return;
     }
     for (i = 0; i < count / 2u; i++) {
@@ -451,7 +451,7 @@ void cadt_fill(void *base, size_t count, size_t elem_size, const void *value)
     unsigned char *bytes = (unsigned char *)base;
     size_t i;
 
-    if (base == NULL || value == NULL || elem_size == 0) {
+    if (base == nullptr || value == nullptr || elem_size == 0) {
         return;
     }
     for (i = 0; i < count; i++) {
@@ -467,7 +467,7 @@ void *cadt_min_element(const void *base, size_t count, size_t elem_size,
     size_t i;
 
     if (count == 0 || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     for (i = 1; i < count; i++) {
         if (cmp_index(&env, i, best) < 0) {
@@ -485,7 +485,7 @@ void *cadt_max_element(const void *base, size_t count, size_t elem_size,
     size_t i;
 
     if (count == 0 || prepare(&env, (void *)base, count, elem_size, cmp, ctx) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     for (i = 1; i < count; i++) {
         if (cmp_index(&env, i, best) > 0) {
@@ -505,13 +505,13 @@ bool cadt_equal(const void *a, const void *b, size_t count, size_t elem_size,
     if (count == 0) {
         return true;
     }
-    if (a == NULL || b == NULL || elem_size == 0) {
+    if (a == nullptr || b == nullptr || elem_size == 0) {
         return false;
     }
     for (i = 0; i < count; i++) {
         const void *ea = aa + i * elem_size;
         const void *eb = bb + i * elem_size;
-        int result = cmp != NULL ? cmp(ea, eb, ctx) : memcmp(ea, eb, elem_size);
+        int result = cmp != nullptr ? cmp(ea, eb, ctx) : memcmp(ea, eb, elem_size);
 
         if (result != 0) {
             return false;

@@ -21,7 +21,7 @@ size_t cadt_stack_size(const cadt_stack *stack);
 bool cadt_stack_empty(const cadt_stack *stack);
 void cadt_stack_clear(cadt_stack *stack);
 
-/* Invalidated by a push that grows the stack. NULL when empty. */
+/* Invalidated by a push that grows the stack. nullptr when empty. */
 void *cadt_stack_top(const cadt_stack *stack);
 cadt_status cadt_stack_push(cadt_stack *stack, const void *elem);
 cadt_status cadt_stack_pop(cadt_stack *stack, void *out);

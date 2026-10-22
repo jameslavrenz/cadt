@@ -26,34 +26,34 @@ cadt_array *cadt_array_create(const cadt_type *type, size_t count, const void *f
     cadt_status status;
 
     if (cadt_type_check(type) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
-    if (count > 0 && fill == NULL && type->destroy != NULL) {
-        return NULL;
+    if (count > 0 && fill == nullptr && type->destroy != nullptr) {
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     arr = (cadt_array *)cadt_xalloc(alloc, sizeof(*arr));
-    if (arr == NULL) {
-        return NULL;
+    if (arr == nullptr) {
+        return nullptr;
     }
     arr->alloc = alloc;
     arr->type = *type;
     arr->size = count;
-    arr->data = NULL;
+    arr->data = nullptr;
     if (count == 0) {
         return arr;
     }
     if (!cadt_mul_size(count, type->size, &bytes)) {
         cadt_xfree(alloc, arr);
-        return NULL;
+        return nullptr;
     }
     arr->data = (unsigned char *)cadt_xalloc(alloc, bytes);
-    if (arr->data == NULL) {
+    if (arr->data == nullptr) {
         cadt_xfree(alloc, arr);
-        return NULL;
+        return nullptr;
     }
     for (i = 0; i < count; i++) {
-        if (fill == NULL) {
+        if (fill == nullptr) {
             memset(slot(arr, i), 0, arr->type.size);
         } else {
             status = cadt_type_copy(&arr->type, slot(arr, i), fill);
@@ -64,7 +64,7 @@ cadt_array *cadt_array_create(const cadt_type *type, size_t count, const void *f
                 }
                 cadt_xfree(alloc, arr->data);
                 cadt_xfree(alloc, arr);
-                return NULL;
+                return nullptr;
             }
         }
     }
@@ -75,7 +75,7 @@ void cadt_array_destroy(cadt_array *arr)
 {
     size_t i;
 
-    if (arr == NULL) {
+    if (arr == nullptr) {
         return;
     }
     for (i = 0; i < arr->size; i++) {
@@ -87,7 +87,7 @@ void cadt_array_destroy(cadt_array *arr)
 
 size_t cadt_array_size(const cadt_array *arr)
 {
-    return arr == NULL ? 0 : arr->size;
+    return arr == nullptr ? 0 : arr->size;
 }
 
 bool cadt_array_empty(const cadt_array *arr)
@@ -97,15 +97,15 @@ bool cadt_array_empty(const cadt_array *arr)
 
 void *cadt_array_at(const cadt_array *arr, size_t index)
 {
-    if (arr == NULL || index >= arr->size) {
-        return NULL;
+    if (arr == nullptr || index >= arr->size) {
+        return nullptr;
     }
     return slot(arr, index);
 }
 
 void *cadt_array_data(const cadt_array *arr)
 {
-    return arr == NULL ? NULL : arr->data;
+    return arr == nullptr ? nullptr : arr->data;
 }
 
 void *cadt_array_front(const cadt_array *arr)
@@ -115,16 +115,16 @@ void *cadt_array_front(const cadt_array *arr)
 
 void *cadt_array_back(const cadt_array *arr)
 {
-    if (arr == NULL || arr->size == 0) {
-        return NULL;
+    if (arr == nullptr || arr->size == 0) {
+        return nullptr;
     }
     return slot(arr, arr->size - 1u);
 }
 
 cadt_span cadt_array_as_span(const cadt_array *arr)
 {
-    if (arr == NULL) {
-        return cadt_span_make(NULL, 0, 0);
+    if (arr == nullptr) {
+        return cadt_span_make(nullptr, 0, 0);
     }
     return cadt_span_make(arr->data, arr->size, arr->type.size);
 }
@@ -134,14 +134,14 @@ cadt_status cadt_array_set(cadt_array *arr, size_t index, const void *elem)
     unsigned char *tmp;
     cadt_status status;
 
-    if (arr == NULL || elem == NULL) {
+    if (arr == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index >= arr->size) {
         return CADT_ERR_RANGE;
     }
     tmp = (unsigned char *)cadt_xalloc(arr->alloc, arr->type.size);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&arr->type, tmp, elem);

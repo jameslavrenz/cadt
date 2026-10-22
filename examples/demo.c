@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
-static int cmp_int(const void *a, const void *b, void *ctx)
+static int cmp_int(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
     int ia = *(const int *)a;
     int ib = *(const int *)b;
-    (void)ctx;
     return (ia > ib) - (ia < ib);
 }
 
@@ -34,8 +33,8 @@ int main(void)
     type.size = sizeof(int);
     type.compare = cmp_int;
 
-    numbers = cadt_vector_create(&type, NULL);
-    if (numbers == NULL) {
+    numbers = cadt_vector_create(&type, nullptr);
+    if (numbers == nullptr) {
         return fail("vector");
     }
     for (i = 0; i < 5; i++) {
@@ -44,7 +43,7 @@ int main(void)
         }
     }
     if (cadt_sort(cadt_vector_data(numbers), cadt_vector_size(numbers), sizeof(int),
-                  cmp_int, NULL) != CADT_OK) {
+                  cmp_int, nullptr) != CADT_OK) {
         return fail("sort");
     }
     for (i = 1; i < 5; i++) {
@@ -55,8 +54,8 @@ int main(void)
         }
     }
 
-    unique = cadt_set_create(&type, NULL);
-    if (unique == NULL) {
+    unique = cadt_set_create(&type, nullptr);
+    if (unique == nullptr) {
         return fail("set");
     }
     for (i = 0; i < 5; i++) {
@@ -69,9 +68,9 @@ int main(void)
         return fail("unique");
     }
 
-    stack = cadt_stack_create(&type, NULL);
-    heap = cadt_pqueue_create(&type, true, NULL);
-    if (stack == NULL || heap == NULL) {
+    stack = cadt_stack_create(&type, nullptr);
+    heap = cadt_pqueue_create(&type, true, nullptr);
+    if (stack == nullptr || heap == nullptr) {
         return fail("adapters");
     }
     for (i = 0; i < 5; i++) {
@@ -91,8 +90,8 @@ int main(void)
         previous = out;
     }
 
-    line = cadt_string_create_cstr("cadt", NULL);
-    if (line == NULL || cadt_string_append_cstr(line, " works") != CADT_OK ||
+    line = cadt_string_create_cstr("cadt", nullptr);
+    if (line == nullptr || cadt_string_append_cstr(line, " works") != CADT_OK ||
         !cadt_string_equals_cstr(line, "cadt works")) {
         return fail("string");
     }

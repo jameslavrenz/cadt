@@ -59,25 +59,24 @@ install target. The default prefix is `/usr/local`.
 #include "cadt.h"
 #include <stdio.h>
 
-static int cmp_int(const void *a, const void *b, void *ctx)
+static int cmp_int(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
     int ia = *(const int *)a;
     int ib = *(const int *)b;
-    (void)ctx;
     return (ia > ib) - (ia < ib);
 }
 
 int main(void)
 {
     cadt_type type = {.size = sizeof(int), .compare = cmp_int};
-    cadt_vector *vec = cadt_vector_create(&type, NULL);
+    cadt_vector *vec = cadt_vector_create(&type, nullptr);
     int i;
 
     for (i = 0; i < 5; i++) {
         cadt_vector_push_back(vec, &i);
     }
     cadt_sort(cadt_vector_data(vec), cadt_vector_size(vec), sizeof(int),
-              cmp_int, NULL);
+              cmp_int, nullptr);
     for (i = 0; i < 5; i++) {
         printf("%d\n", *(int *)cadt_vector_at(vec, (size_t)i));
     }
@@ -93,16 +92,16 @@ words on standard input with an unordered map of owned strings.
 
 Containers copy elements in and own those copies.
 
-* A `NULL` copy callback copies bytes with `memcpy`. Use that for plain values.
+* A `nullptr` copy callback copies bytes with `memcpy`. Use that for plain values.
 * A copy callback that allocates must have a matching destroy callback. The
   container calls destroy when it drops an element. Pop and erase can instead
   move the element out to the caller, and then destroy is not called.
 * Ordered containers and the priority queue require `compare`. Byte order is
   not numeric order. `compare` returns negative, zero, or positive, as `memcmp`
   does.
-* A `NULL` hash callback hashes the raw key bytes with FNV-1a. Equal keys must
+* A `nullptr` hash callback hashes the raw key bytes with FNV-1a. Equal keys must
   hash equal.
-* Pass `NULL` as the allocator to use `malloc` / `realloc` / `free`. A custom
+* Pass `nullptr` as the allocator to use `malloc` / `realloc` / `free`. A custom
   `cadt_allocator` must outlive every container created with it.
 
 Mutations that grow a vector or deque invalidate outstanding element pointers.
@@ -110,7 +109,7 @@ List, set, and map iterators stay valid except for the erased element. Rehash
 invalidates unordered-container iterators.
 
 Functions that can fail return a `cadt_status`. `cadt_status_str` names the
-code. Destroying `NULL` is a no-op.
+code. Destroying `nullptr` is a no-op.
 
 ## Layout
 

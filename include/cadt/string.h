@@ -51,7 +51,7 @@ bool cadt_string_ends_with(const cadt_string *str, const char *suffix);
 size_t cadt_string_find_n(const cadt_string *str, const char *needle, size_t needle_len);
 size_t cadt_string_find_cstr(const cadt_string *str, const char *needle);
 
-/* NULL when the range does not fit. */
+/* nullptr when the range does not fit. */
 cadt_string *cadt_string_substr(const cadt_string *str, size_t index, size_t count);
 
 #ifdef __cplusplus

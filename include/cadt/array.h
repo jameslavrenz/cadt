@@ -18,7 +18,7 @@ typedef struct cadt_array cadt_array;
 
 /*
  * count elements are copy-constructed from fill.
- * fill NULL zero-fills and is rejected when the type has a destructor.
+ * fill nullptr zero-fills and is rejected when the type has a destructor.
  * count 0 yields an empty array.
  */
 cadt_array *cadt_array_create(const cadt_type *type, size_t count, const void *fill,

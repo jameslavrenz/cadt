@@ -21,14 +21,14 @@ static cadt_umap *create_map(const cadt_type *key, const cadt_type *value, bool 
 
     alloc = cadt_alloc_or_default(alloc);
     map = (cadt_umap *)cadt_xalloc(alloc, sizeof(*map));
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     map->alloc = alloc;
-    map->table = NULL;
+    map->table = nullptr;
     if (!cadt_kv_init(&map->kv, key, value)) {
         cadt_xfree(alloc, map);
-        return NULL;
+        return nullptr;
     }
     memset(&elem, 0, sizeof(elem));
     elem.size = map->kv.elem_size;
@@ -43,9 +43,9 @@ static cadt_umap *create_map(const cadt_type *key, const cadt_type *value, bool 
     cfg.key_ctx = key->ctx;
     cfg.multi = multi;
     map->table = cadt_hash_create(&cfg, alloc);
-    if (map->table == NULL) {
+    if (map->table == nullptr) {
         cadt_xfree(alloc, map);
-        return NULL;
+        return nullptr;
     }
     return map;
 }
@@ -84,7 +84,7 @@ cadt_umap *cadt_umultimap_create(const cadt_type *key, const cadt_type *value,
 
 void cadt_umap_destroy(cadt_umap *map)
 {
-    if (map == NULL) {
+    if (map == nullptr) {
         return;
     }
     cadt_hash_destroy(map->table);
@@ -93,12 +93,12 @@ void cadt_umap_destroy(cadt_umap *map)
 
 size_t cadt_umap_size(const cadt_umap *map)
 {
-    return map == NULL ? 0 : cadt_hash_size(map->table);
+    return map == nullptr ? 0 : cadt_hash_size(map->table);
 }
 
 size_t cadt_umap_bucket_count(const cadt_umap *map)
 {
-    return map == NULL ? 0 : cadt_hash_buckets(map->table);
+    return map == nullptr ? 0 : cadt_hash_buckets(map->table);
 }
 
 bool cadt_umap_empty(const cadt_umap *map)
@@ -108,12 +108,12 @@ bool cadt_umap_empty(const cadt_umap *map)
 
 bool cadt_umap_is_multi(const cadt_umap *map)
 {
-    return map != NULL && cadt_hash_is_multi(map->table);
+    return map != nullptr && cadt_hash_is_multi(map->table);
 }
 
 void cadt_umap_clear(cadt_umap *map)
 {
-    if (map != NULL) {
+    if (map != nullptr) {
         cadt_hash_clear(map->table);
     }
 }
@@ -123,7 +123,7 @@ cadt_status cadt_umap_insert(cadt_umap *map, const void *key, const void *value)
     unsigned char *packed;
     cadt_status status;
 
-    if (map == NULL || key == NULL || value == NULL) {
+    if (map == nullptr || key == nullptr || value == nullptr) {
         return CADT_ERR_INVALID;
     }
     status = cadt_kv_pack(map->alloc, &map->kv, key, value, &packed);
@@ -146,18 +146,18 @@ cadt_status cadt_umap_put(cadt_umap *map, const void *key, const void *value)
     unsigned char *tmp;
     cadt_status status;
 
-    if (map == NULL || key == NULL || value == NULL) {
+    if (map == nullptr || key == nullptr || value == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (cadt_hash_is_multi(map->table)) {
         return CADT_ERR_INVALID;
     }
     existing = cadt_hash_find(map->table, key);
-    if (existing == NULL) {
+    if (existing == nullptr) {
         return cadt_umap_insert(map, key, value);
     }
     tmp = (unsigned char *)cadt_xalloc(map->alloc, map->kv.value.size);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&map->kv.value, tmp, value);
@@ -174,25 +174,25 @@ cadt_status cadt_umap_put(cadt_umap *map, const void *key, const void *value)
 
 size_t cadt_umap_erase(cadt_umap *map, const void *key)
 {
-    return map == NULL ? 0 : cadt_hash_erase(map->table, key);
+    return map == nullptr ? 0 : cadt_hash_erase(map->table, key);
 }
 
 bool cadt_umap_contains(const cadt_umap *map, const void *key)
 {
-    return cadt_umap_get(map, key) != NULL;
+    return cadt_umap_get(map, key) != nullptr;
 }
 
 size_t cadt_umap_count(const cadt_umap *map, const void *key)
 {
-    return map == NULL ? 0 : cadt_hash_count(map->table, key);
+    return map == nullptr ? 0 : cadt_hash_count(map->table, key);
 }
 
 void *cadt_umap_get(const cadt_umap *map, const void *key)
 {
     void *elem;
 
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     elem = cadt_hash_find(map->table, key);
     return cadt_kv_value(&map->kv, elem);
@@ -200,16 +200,16 @@ void *cadt_umap_get(const cadt_umap *map, const void *key)
 
 cadt_umap_iter cadt_umap_begin(const cadt_umap *map)
 {
-    if (map == NULL) {
-        return from_hash(cadt_hash_begin(NULL));
+    if (map == nullptr) {
+        return from_hash(cadt_hash_begin(nullptr));
     }
     return from_hash(cadt_hash_begin(map->table));
 }
 
 cadt_umap_iter cadt_umap_end(const cadt_umap *map)
 {
-    if (map == NULL) {
-        return from_hash(cadt_hash_end(NULL));
+    if (map == nullptr) {
+        return from_hash(cadt_hash_end(nullptr));
     }
     return from_hash(cadt_hash_end(map->table));
 }
@@ -221,15 +221,14 @@ cadt_umap_iter cadt_umap_next(cadt_umap_iter it)
 
 bool cadt_umap_iter_eq(cadt_umap_iter a, cadt_umap_iter b)
 {
-    if (a.node == NULL && b.node == NULL) {
+    if (a.node == nullptr && b.node == nullptr) {
         return true;
     }
     return a.node == b.node;
 }
 
-void *cadt_umap_iter_key(const cadt_umap *map, cadt_umap_iter it)
+void *cadt_umap_iter_key([[maybe_unused]] const cadt_umap *map, cadt_umap_iter it)
 {
-    (void)map;
     return cadt_hash_iter_data(to_hash(it));
 }
 
@@ -237,8 +236,8 @@ void *cadt_umap_iter_value(const cadt_umap *map, cadt_umap_iter it)
 {
     void *elem;
 
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     elem = cadt_hash_iter_data(to_hash(it));
     return cadt_kv_value(&map->kv, elem);
@@ -246,7 +245,7 @@ void *cadt_umap_iter_value(const cadt_umap *map, cadt_umap_iter it)
 
 cadt_status cadt_umap_validate(const cadt_umap *map)
 {
-    if (map == NULL) {
+    if (map == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_hash_validate(map->table);

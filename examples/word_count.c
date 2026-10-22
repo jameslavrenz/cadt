@@ -7,13 +7,12 @@
 
 static int g_live;
 
-static cadt_status copy_cstr(void *dst, const void *src, void *ctx)
+static cadt_status copy_cstr(void *dst, const void *src, [[maybe_unused]] void *ctx)
 {
     const char *text = *(const char *const *)src;
     size_t length = strlen(text) + 1u;
     char *copy = (char *)malloc(length);
-    (void)ctx;
-    if (copy == NULL) {
+    if (copy == nullptr) {
         return CADT_ERR_NOMEM;
     }
     memcpy(copy, text, length);
@@ -22,29 +21,25 @@ static cadt_status copy_cstr(void *dst, const void *src, void *ctx)
     return CADT_OK;
 }
 
-static void destroy_cstr(void *elem, void *ctx)
+static void destroy_cstr(void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     free(*(char **)elem);
     g_live--;
 }
 
-static int cmp_cstr(const void *a, const void *b, void *ctx)
+static int cmp_cstr(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     return strcmp(*(const char *const *)a, *(const char *const *)b);
 }
 
-static uint64_t hash_cstr(const void *elem, void *ctx)
+static uint64_t hash_cstr(const void *elem, [[maybe_unused]] void *ctx)
 {
     const char *text = *(const char *const *)elem;
-    (void)ctx;
     return cadt_hash_bytes(text, strlen(text));
 }
 
-static int cmp_cstr_ptr(const void *a, const void *b, void *ctx)
+static int cmp_cstr_ptr(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     return strcmp(*(const char *const *)a, *(const char *const *)b);
 }
 
@@ -53,7 +48,7 @@ static int note(cadt_umap *counts, const char *word)
     int *slot = (int *)cadt_umap_get(counts, &word);
     int one = 1;
 
-    if (slot != NULL) {
+    if (slot != nullptr) {
         (*slot)++;
         return 1;
     }
@@ -82,10 +77,10 @@ int main(void)
     memset(&pointer_type, 0, sizeof(pointer_type));
     pointer_type.size = sizeof(char *);
 
-    counts = cadt_umap_create(&key_type, &value_type, NULL);
-    word = cadt_string_create(NULL);
-    keys = cadt_vector_create(&pointer_type, NULL);
-    if (counts == NULL || word == NULL || keys == NULL) {
+    counts = cadt_umap_create(&key_type, &value_type, nullptr);
+    word = cadt_string_create(nullptr);
+    keys = cadt_vector_create(&pointer_type, nullptr);
+    if (counts == nullptr || word == nullptr || keys == nullptr) {
         fprintf(stderr, "out of memory\n");
         return 1;
     }
@@ -116,14 +111,14 @@ int main(void)
         }
     }
     if (cadt_sort(cadt_vector_data(keys), cadt_vector_size(keys), sizeof(char *),
-                  cmp_cstr_ptr, NULL) != CADT_OK) {
+                  cmp_cstr_ptr, nullptr) != CADT_OK) {
         fprintf(stderr, "sort failed\n");
         return 1;
     }
     for (size_t i = 0; i < cadt_vector_size(keys); i++) {
         char *text = *(char **)cadt_vector_at(keys, i);
         int *count = (int *)cadt_umap_get(counts, &text);
-        printf("%s %d\n", text, count == NULL ? 0 : *count);
+        printf("%s %d\n", text, count == nullptr ? 0 : *count);
     }
 
     cadt_vector_destroy(keys);

@@ -11,7 +11,7 @@
 typedef struct cadt_hnode {
     struct cadt_hnode *next;
     uint64_t hash;
-    _Alignas(max_align_t) unsigned char data[];
+    alignas(max_align_t) unsigned char data[];
 } cadt_hnode;
 
 struct cadt_hash {
@@ -35,7 +35,7 @@ static const void *key_ptr(const cadt_hash *table, const void *elem)
 
 static uint64_t hash_key(const cadt_hash *table, const void *key)
 {
-    if (table->key_hash != NULL) {
+    if (table->key_hash != nullptr) {
         return table->key_hash(key, table->key_ctx);
     }
     return cadt_hash_bytes(key, table->key_size);
@@ -50,7 +50,7 @@ static int cmp_key(const cadt_hash *table, const void *key, const void *elem)
 {
     const void *stored = key_ptr(table, elem);
 
-    if (table->key_cmp != NULL) {
+    if (table->key_cmp != nullptr) {
         return table->key_cmp(key, stored, table->key_ctx);
     }
     return memcmp(key, stored, table->key_size);
@@ -61,13 +61,13 @@ static cadt_hnode *find_in_bucket(const cadt_hash *table, size_t index, const vo
 {
     cadt_hnode *node = table->buckets[index];
 
-    while (node != NULL) {
+    while (node != nullptr) {
         if (node->hash == hash && cmp_key(table, key, node->data) == 0) {
             return node;
         }
         node = node->next;
     }
-    return NULL;
+    return nullptr;
 }
 
 static cadt_status rehash(cadt_hash *table, size_t new_n)
@@ -83,14 +83,14 @@ static cadt_status rehash(cadt_hash *table, size_t new_n)
         return CADT_ERR_OVERFLOW;
     }
     fresh = (cadt_hnode **)cadt_xalloc(table->alloc, bytes);
-    if (fresh == NULL) {
+    if (fresh == nullptr) {
         return CADT_ERR_NOMEM;
     }
     memset(fresh, 0, bytes);
     for (i = 0; i < table->nbuckets; i++) {
         cadt_hnode *node = table->buckets[i];
 
-        while (node != NULL) {
+        while (node != nullptr) {
             cadt_hnode *next = node->next;
             size_t idx = (size_t)(node->hash & (uint64_t)(new_n - 1u));
 
@@ -116,14 +116,14 @@ cadt_hash *cadt_hash_create(const cadt_hash_cfg *cfg, const cadt_allocator *allo
     cadt_hash *table;
     size_t bytes;
 
-    if (cfg == NULL || cadt_type_check(&cfg->elem) != CADT_OK || cfg->key_size == 0 ||
+    if (cfg == nullptr || cadt_type_check(&cfg->elem) != CADT_OK || cfg->key_size == 0 ||
         cfg->key_offset > cfg->elem.size || cfg->key_size > cfg->elem.size - cfg->key_offset) {
-        return NULL;
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     table = (cadt_hash *)cadt_xalloc(alloc, sizeof(*table));
-    if (table == NULL) {
-        return NULL;
+    if (table == nullptr) {
+        return nullptr;
     }
     table->alloc = alloc;
     table->elem = cfg->elem;
@@ -137,12 +137,12 @@ cadt_hash *cadt_hash_create(const cadt_hash_cfg *cfg, const cadt_allocator *allo
     table->size = 0;
     if (!cadt_mul_size(table->nbuckets, sizeof(*table->buckets), &bytes)) {
         cadt_xfree(alloc, table);
-        return NULL;
+        return nullptr;
     }
     table->buckets = (cadt_hnode **)cadt_xalloc(alloc, bytes);
-    if (table->buckets == NULL) {
+    if (table->buckets == nullptr) {
         cadt_xfree(alloc, table);
-        return NULL;
+        return nullptr;
     }
     memset(table->buckets, 0, bytes);
     return table;
@@ -152,26 +152,26 @@ void cadt_hash_clear(cadt_hash *table)
 {
     size_t i;
 
-    if (table == NULL) {
+    if (table == nullptr) {
         return;
     }
     for (i = 0; i < table->nbuckets; i++) {
         cadt_hnode *node = table->buckets[i];
 
-        while (node != NULL) {
+        while (node != nullptr) {
             cadt_hnode *next = node->next;
 
             free_node(table, node);
             node = next;
         }
-        table->buckets[i] = NULL;
+        table->buckets[i] = nullptr;
     }
     table->size = 0;
 }
 
 void cadt_hash_destroy(cadt_hash *table)
 {
-    if (table == NULL) {
+    if (table == nullptr) {
         return;
     }
     cadt_hash_clear(table);
@@ -181,17 +181,17 @@ void cadt_hash_destroy(cadt_hash *table)
 
 size_t cadt_hash_size(const cadt_hash *table)
 {
-    return table == NULL ? 0 : table->size;
+    return table == nullptr ? 0 : table->size;
 }
 
 size_t cadt_hash_buckets(const cadt_hash *table)
 {
-    return table == NULL ? 0 : table->nbuckets;
+    return table == nullptr ? 0 : table->nbuckets;
 }
 
 bool cadt_hash_is_multi(const cadt_hash *table)
 {
-    return table != NULL && table->multi;
+    return table != nullptr && table->multi;
 }
 
 cadt_status cadt_hash_insert(cadt_hash *table, const void *elem)
@@ -202,12 +202,12 @@ cadt_status cadt_hash_insert(cadt_hash *table, const void *elem)
     cadt_hnode *node;
     cadt_status status;
 
-    if (table == NULL || elem == NULL) {
+    if (table == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     hash = hash_elem(table, elem);
     index = (size_t)(hash & (uint64_t)(table->nbuckets - 1u));
-    if (!table->multi && find_in_bucket(table, index, key_ptr(table, elem), hash) != NULL) {
+    if (!table->multi && find_in_bucket(table, index, key_ptr(table, elem), hash) != nullptr) {
         return CADT_ERR_EXISTS;
     }
     if (table->size + 1u > table->nbuckets - table->nbuckets / 4u) {
@@ -224,7 +224,7 @@ cadt_status cadt_hash_insert(cadt_hash *table, const void *elem)
         return CADT_ERR_OVERFLOW;
     }
     node = (cadt_hnode *)cadt_xalloc(table->alloc, bytes);
-    if (node == NULL) {
+    if (node == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&table->elem, node->data, elem);
@@ -244,20 +244,20 @@ size_t cadt_hash_erase(cadt_hash *table, const void *key)
     uint64_t hash;
     size_t index;
     cadt_hnode *node;
-    cadt_hnode *prev = NULL;
+    cadt_hnode *prev = nullptr;
     size_t removed = 0;
 
-    if (table == NULL || key == NULL) {
+    if (table == nullptr || key == nullptr) {
         return 0;
     }
     hash = hash_key(table, key);
     index = (size_t)(hash & (uint64_t)(table->nbuckets - 1u));
     node = table->buckets[index];
-    while (node != NULL) {
+    while (node != nullptr) {
         cadt_hnode *next = node->next;
 
         if (node->hash == hash && cmp_key(table, key, node->data) == 0) {
-            if (prev == NULL) {
+            if (prev == nullptr) {
                 table->buckets[index] = next;
             } else {
                 prev->next = next;
@@ -285,13 +285,13 @@ void *cadt_hash_find(const cadt_hash *table, const void *key)
     size_t index;
     cadt_hnode *node;
 
-    if (table == NULL || key == NULL) {
-        return NULL;
+    if (table == nullptr || key == nullptr) {
+        return nullptr;
     }
     hash = hash_key(table, key);
     index = (size_t)(hash & (uint64_t)(table->nbuckets - 1u));
     node = find_in_bucket(table, index, key, hash);
-    return node == NULL ? NULL : node->data;
+    return node == nullptr ? nullptr : node->data;
 }
 
 size_t cadt_hash_count(const cadt_hash *table, const void *key)
@@ -301,13 +301,13 @@ size_t cadt_hash_count(const cadt_hash *table, const void *key)
     cadt_hnode *node;
     size_t count = 0;
 
-    if (table == NULL || key == NULL) {
+    if (table == nullptr || key == nullptr) {
         return 0;
     }
     hash = hash_key(table, key);
     index = (size_t)(hash & (uint64_t)(table->nbuckets - 1u));
     node = table->buckets[index];
-    while (node != NULL) {
+    while (node != nullptr) {
         if (node->hash == hash && cmp_key(table, key, node->data) == 0) {
             count++;
         }
@@ -321,8 +321,8 @@ static cadt_hash_iter iter_end(const cadt_hash *table)
     cadt_hash_iter it;
 
     it.table = (void *)table;
-    it.bucket = table == NULL ? 0 : table->nbuckets;
-    it.node = NULL;
+    it.bucket = table == nullptr ? 0 : table->nbuckets;
+    it.node = nullptr;
     return it;
 }
 
@@ -331,11 +331,11 @@ cadt_hash_iter cadt_hash_begin(const cadt_hash *table)
     size_t i;
     cadt_hash_iter it;
 
-    if (table == NULL) {
-        return iter_end(NULL);
+    if (table == nullptr) {
+        return iter_end(nullptr);
     }
     for (i = 0; i < table->nbuckets; i++) {
-        if (table->buckets[i] != NULL) {
+        if (table->buckets[i] != nullptr) {
             it.table = (void *)table;
             it.bucket = i;
             it.node = table->buckets[i];
@@ -356,15 +356,15 @@ cadt_hash_iter cadt_hash_next(cadt_hash_iter it)
     cadt_hnode *node = (cadt_hnode *)it.node;
     size_t i;
 
-    if (table == NULL || node == NULL) {
+    if (table == nullptr || node == nullptr) {
         return it;
     }
-    if (node->next != NULL) {
+    if (node->next != nullptr) {
         it.node = node->next;
         return it;
     }
     for (i = it.bucket + 1u; i < table->nbuckets; i++) {
-        if (table->buckets[i] != NULL) {
+        if (table->buckets[i] != nullptr) {
             it.bucket = i;
             it.node = table->buckets[i];
             return it;
@@ -377,7 +377,7 @@ void *cadt_hash_iter_data(cadt_hash_iter it)
 {
     cadt_hnode *node = (cadt_hnode *)it.node;
 
-    return node == NULL ? NULL : node->data;
+    return node == nullptr ? nullptr : node->data;
 }
 
 cadt_status cadt_hash_validate(const cadt_hash *table)
@@ -385,14 +385,14 @@ cadt_status cadt_hash_validate(const cadt_hash *table)
     size_t i;
     size_t seen = 0;
 
-    if (table == NULL || table->buckets == NULL || table->nbuckets < 8u ||
+    if (table == nullptr || table->buckets == nullptr || table->nbuckets < 8u ||
         (table->nbuckets & (table->nbuckets - 1u)) != 0) {
         return CADT_ERR_INVALID;
     }
     for (i = 0; i < table->nbuckets; i++) {
         cadt_hnode *node = table->buckets[i];
 
-        while (node != NULL) {
+        while (node != nullptr) {
             size_t expect;
             cadt_hnode *other;
 
@@ -406,7 +406,7 @@ cadt_status cadt_hash_validate(const cadt_hash *table)
                 return CADT_ERR_INVALID;
             }
             if (!table->multi) {
-                for (other = node->next; other != NULL; other = other->next) {
+                for (other = node->next; other != nullptr; other = other->next) {
                     if (other->hash == node->hash &&
                         cmp_key(table, key_ptr(table, node->data), other->data) == 0) {
                         fprintf(stderr, "cadt hash invariant duplicate\n");

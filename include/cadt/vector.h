@@ -29,29 +29,29 @@ cadt_status cadt_vector_shrink_to_fit(cadt_vector *vec);
 
 /*
  * Grow by copy-constructing fill, or shrink by destroying the tail.
- * fill NULL zero-fills and is rejected when the type has a destructor.
+ * fill nullptr zero-fills and is rejected when the type has a destructor.
  */
 cadt_status cadt_vector_resize(cadt_vector *vec, size_t new_size, const void *fill);
 void cadt_vector_clear(cadt_vector *vec);
 
-/* NULL when index is out of range. */
+/* nullptr when index is out of range. */
 void *cadt_vector_at(const cadt_vector *vec, size_t index);
 void *cadt_vector_front(const cadt_vector *vec);
 void *cadt_vector_back(const cadt_vector *vec);
 
-/* Contiguous storage. NULL when capacity is 0. */
+/* Contiguous storage. nullptr when capacity is 0. */
 void *cadt_vector_data(const cadt_vector *vec);
 cadt_span cadt_vector_as_span(const cadt_vector *vec);
 
 cadt_status cadt_vector_push_back(cadt_vector *vec, const void *elem);
-/* out may be NULL to destroy the element instead of moving it out. */
+/* out may be nullptr to destroy the element instead of moving it out. */
 cadt_status cadt_vector_pop_back(cadt_vector *vec, void *out);
 cadt_status cadt_vector_set(cadt_vector *vec, size_t index, const void *elem);
 cadt_status cadt_vector_insert(cadt_vector *vec, size_t index, const void *elem);
 cadt_status cadt_vector_erase(cadt_vector *vec, size_t index, void *out);
 cadt_status cadt_vector_erase_range(cadt_vector *vec, size_t index, size_t count);
 
-/* First element comparing equal, or NULL. */
+/* First element comparing equal, or nullptr. */
 void *cadt_vector_find(const cadt_vector *vec, const void *elem);
 
 #ifdef __cplusplus

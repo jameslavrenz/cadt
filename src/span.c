@@ -9,7 +9,7 @@ cadt_span cadt_span_make(void *data, size_t size, size_t elem_size)
 {
     cadt_span span;
 
-    span.data = size == 0 ? NULL : data;
+    span.data = size == 0 ? nullptr : data;
     span.size = elem_size == 0 ? 0 : size;
     span.elem_size = elem_size;
     return span;
@@ -17,8 +17,8 @@ cadt_span cadt_span_make(void *data, size_t size, size_t elem_size)
 
 void *cadt_span_at(cadt_span span, size_t index)
 {
-    if (span.data == NULL || span.elem_size == 0 || index >= span.size) {
-        return NULL;
+    if (span.data == nullptr || span.elem_size == 0 || index >= span.size) {
+        return nullptr;
     }
     return (unsigned char *)span.data + index * span.elem_size;
 }
@@ -27,7 +27,7 @@ cadt_span cadt_span_sub(cadt_span span, size_t offset, size_t count)
 {
     cadt_span empty;
 
-    empty.data = NULL;
+    empty.data = nullptr;
     empty.size = 0;
     empty.elem_size = span.elem_size;
     if (offset > span.size) {
@@ -39,8 +39,8 @@ cadt_span cadt_span_sub(cadt_span span, size_t offset, size_t count)
         }
         count = span.size - offset;
     }
-    return cadt_span_make(span.data == NULL
-                              ? NULL
+    return cadt_span_make(span.data == nullptr
+                              ? nullptr
                               : (unsigned char *)span.data + offset * span.elem_size,
                           count, span.elem_size);
 }

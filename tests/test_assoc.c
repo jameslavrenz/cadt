@@ -6,13 +6,12 @@ enum { KEYS = 48, SET_OPS = 2000 };
 
 static int g_live_strings;
 
-static cadt_status copy_cstr(void *dst, const void *src, void *ctx)
+static cadt_status copy_cstr(void *dst, const void *src, [[maybe_unused]] void *ctx)
 {
     const char *in = *(const char *const *)src;
     size_t length = strlen(in) + 1u;
     char *copy = (char *)malloc(length);
-    (void)ctx;
-    if (copy == NULL) {
+    if (copy == nullptr) {
         return CADT_ERR_NOMEM;
     }
     memcpy(copy, in, length);
@@ -21,30 +20,25 @@ static cadt_status copy_cstr(void *dst, const void *src, void *ctx)
     return CADT_OK;
 }
 
-static void destroy_cstr(void *elem, void *ctx)
+static void destroy_cstr(void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     free(*(char **)elem);
     g_live_strings--;
 }
 
-static int cmp_cstr(const void *a, const void *b, void *ctx)
+static int cmp_cstr(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     return strcmp(*(const char *const *)a, *(const char *const *)b);
 }
 
-static uint64_t hash_cstr(const void *elem, void *ctx)
+static uint64_t hash_cstr(const void *elem, [[maybe_unused]] void *ctx)
 {
     const char *text = *(const char *const *)elem;
-    (void)ctx;
     return cadt_hash_bytes(text, strlen(text));
 }
 
-static uint64_t hash_const(const void *elem, void *ctx)
+static uint64_t hash_const([[maybe_unused]] const void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)elem;
-    (void)ctx;
     return 1u;
 }
 
@@ -99,11 +93,11 @@ void test_set(void)
 
     track_init(&state, &alloc);
     type = type_int();
-    type.compare = NULL;
-    CHECK(cadt_set_create(&type, &alloc) == NULL);
+    type.compare = nullptr;
+    CHECK(cadt_set_create(&type, &alloc) == nullptr);
     type = type_int();
     set = cadt_set_create(&type, &alloc);
-    CHECK(set != NULL && cadt_set_validate(set) == CADT_OK);
+    CHECK(set != nullptr && cadt_set_validate(set) == CADT_OK);
     memset(present, 0, sizeof(present));
     for (i = 0; i < SET_OPS; i++) {
         key = (int)(test_rnd(&rng) % (uint32_t)KEYS);
@@ -170,7 +164,7 @@ void test_set(void)
     cadt_set_destroy(set);
 
     multi = cadt_multiset_create(&type, &alloc);
-    CHECK(cadt_multiset_create != NULL && cadt_set_is_multi(multi));
+    CHECK(cadt_set_is_multi(multi));
     for (i = 0; i < 30; i++) {
         key = i % 10;
         CHECK(cadt_set_insert(multi, &key) == CADT_OK);
@@ -217,11 +211,11 @@ void test_map(void)
     track_init(&state, &alloc);
     key_type = type_int();
     value_type = type_int();
-    key_type.compare = NULL;
-    CHECK(cadt_map_create(&key_type, &value_type, &alloc) == NULL);
+    key_type.compare = nullptr;
+    CHECK(cadt_map_create(&key_type, &value_type, &alloc) == nullptr);
     key_type = type_int();
     map = cadt_map_create(&key_type, &value_type, &alloc);
-    CHECK(map != NULL);
+    CHECK(map != nullptr);
     memset(present, 0, sizeof(present));
     for (i = 0; i < 1500; i++) {
         key = (int)(test_rnd(&rng) % (uint32_t)KEYS);
@@ -250,9 +244,9 @@ void test_map(void)
     for (key = 0; key < KEYS; key++) {
         int *slot = (int *)cadt_map_get(map, &key);
         if (!present[key]) {
-            CHECK(slot == NULL);
+            CHECK(slot == nullptr);
         } else {
-            CHECK(slot != NULL && *slot == stored[key]);
+            CHECK(slot != nullptr && *slot == stored[key]);
         }
     }
     key = 1;
@@ -336,7 +330,7 @@ void test_unordered(void)
     track_init(&state, &alloc);
     type = type_int();
     set = cadt_uset_create(&type, &alloc);
-    CHECK(set != NULL);
+    CHECK(set != nullptr);
     memset(present, 0, sizeof(present));
     for (i = 0; i < 200; i++) {
         key = i;
@@ -381,7 +375,7 @@ void test_unordered(void)
     CHECK(cadt_uset_bucket_count(set) >= 8);
     for (i = 0; i < 40; i++) {
         key = i;
-        CHECK(cadt_uset_find(set, &key) != NULL);
+        CHECK(cadt_uset_find(set, &key) != nullptr);
     }
     key = 7;
     CHECK(cadt_uset_erase(set, &key) == 1);
@@ -410,7 +404,7 @@ void test_unordered(void)
     CHECK(cadt_umap_validate(map) == CADT_OK);
     CHECK(cadt_umap_size(map) <= 30);
     key = 1000;
-    CHECK(cadt_umap_get(map, &key) == NULL);
+    CHECK(cadt_umap_get(map, &key) == nullptr);
     cadt_umap_destroy(map);
 
     memset(&str_key, 0, sizeof(str_key));

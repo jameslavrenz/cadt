@@ -19,19 +19,19 @@ static cadt_map *create_map(const cadt_type *key, const cadt_type *value, bool m
     cadt_tree_cfg cfg;
     cadt_type elem;
 
-    if (key == NULL || key->compare == NULL) {
-        return NULL;
+    if (key == nullptr || key->compare == nullptr) {
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     map = (cadt_map *)cadt_xalloc(alloc, sizeof(*map));
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     map->alloc = alloc;
-    map->tree = NULL;
+    map->tree = nullptr;
     if (!cadt_kv_init(&map->kv, key, value)) {
         cadt_xfree(alloc, map);
-        return NULL;
+        return nullptr;
     }
     memset(&elem, 0, sizeof(elem));
     elem.size = map->kv.elem_size;
@@ -45,9 +45,9 @@ static cadt_map *create_map(const cadt_type *key, const cadt_type *value, bool m
     cfg.key_ctx = key->ctx;
     cfg.multi = multi;
     map->tree = cadt_tree_create(&cfg, alloc);
-    if (map->tree == NULL) {
+    if (map->tree == nullptr) {
         cadt_xfree(alloc, map);
-        return NULL;
+        return nullptr;
     }
     return map;
 }
@@ -75,7 +75,7 @@ cadt_map *cadt_multimap_create(const cadt_type *key, const cadt_type *value,
 
 void cadt_map_destroy(cadt_map *map)
 {
-    if (map == NULL) {
+    if (map == nullptr) {
         return;
     }
     cadt_tree_destroy(map->tree);
@@ -84,7 +84,7 @@ void cadt_map_destroy(cadt_map *map)
 
 size_t cadt_map_size(const cadt_map *map)
 {
-    return map == NULL ? 0 : cadt_tree_size(map->tree);
+    return map == nullptr ? 0 : cadt_tree_size(map->tree);
 }
 
 bool cadt_map_empty(const cadt_map *map)
@@ -94,12 +94,12 @@ bool cadt_map_empty(const cadt_map *map)
 
 bool cadt_map_is_multi(const cadt_map *map)
 {
-    return map != NULL && cadt_tree_is_multi(map->tree);
+    return map != nullptr && cadt_tree_is_multi(map->tree);
 }
 
 void cadt_map_clear(cadt_map *map)
 {
-    if (map != NULL) {
+    if (map != nullptr) {
         cadt_tree_clear(map->tree);
     }
 }
@@ -109,7 +109,7 @@ cadt_status cadt_map_insert(cadt_map *map, const void *key, const void *value)
     unsigned char *packed;
     cadt_status status;
 
-    if (map == NULL || key == NULL || value == NULL) {
+    if (map == nullptr || key == nullptr || value == nullptr) {
         return CADT_ERR_INVALID;
     }
     status = cadt_kv_pack(map->alloc, &map->kv, key, value, &packed);
@@ -132,18 +132,18 @@ cadt_status cadt_map_put(cadt_map *map, const void *key, const void *value)
     unsigned char *tmp;
     cadt_status status;
 
-    if (map == NULL || key == NULL || value == NULL) {
+    if (map == nullptr || key == nullptr || value == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (cadt_tree_is_multi(map->tree)) {
         return CADT_ERR_INVALID;
     }
     existing = cadt_tree_find(map->tree, key);
-    if (existing == NULL) {
+    if (existing == nullptr) {
         return cadt_map_insert(map, key, value);
     }
     tmp = (unsigned char *)cadt_xalloc(map->alloc, map->kv.value.size);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&map->kv.value, tmp, value);
@@ -160,25 +160,25 @@ cadt_status cadt_map_put(cadt_map *map, const void *key, const void *value)
 
 size_t cadt_map_erase(cadt_map *map, const void *key)
 {
-    return map == NULL ? 0 : cadt_tree_erase(map->tree, key);
+    return map == nullptr ? 0 : cadt_tree_erase(map->tree, key);
 }
 
 bool cadt_map_contains(const cadt_map *map, const void *key)
 {
-    return cadt_map_get(map, key) != NULL;
+    return cadt_map_get(map, key) != nullptr;
 }
 
 size_t cadt_map_count(const cadt_map *map, const void *key)
 {
-    return map == NULL ? 0 : cadt_tree_count(map->tree, key);
+    return map == nullptr ? 0 : cadt_tree_count(map->tree, key);
 }
 
 void *cadt_map_get(const cadt_map *map, const void *key)
 {
     void *elem;
 
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     elem = cadt_tree_find(map->tree, key);
     return cadt_kv_value(&map->kv, elem);
@@ -186,20 +186,20 @@ void *cadt_map_get(const cadt_map *map, const void *key)
 
 cadt_map_iter cadt_map_begin(const cadt_map *map)
 {
-    if (map == NULL) {
-        return iter_of(NULL, NULL);
+    if (map == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(map, cadt_tree_minimum(map->tree));
 }
 
 cadt_map_iter cadt_map_end(const cadt_map *map)
 {
-    return iter_of(map, NULL);
+    return iter_of(map, nullptr);
 }
 
 cadt_map_iter cadt_map_next(cadt_map_iter it)
 {
-    if (it.node != NULL) {
+    if (it.node != nullptr) {
         it.node = cadt_tree_next(it.node);
     }
     return it;
@@ -209,10 +209,10 @@ cadt_map_iter cadt_map_prev(cadt_map_iter it)
 {
     const cadt_map *map = (const cadt_map *)it.owner;
 
-    if (map == NULL) {
+    if (map == nullptr) {
         return it;
     }
-    if (it.node == NULL) {
+    if (it.node == nullptr) {
         it.node = cadt_tree_maximum(map->tree);
         return it;
     }
@@ -225,39 +225,38 @@ bool cadt_map_iter_eq(cadt_map_iter a, cadt_map_iter b)
     return a.owner == b.owner && a.node == b.node;
 }
 
-void *cadt_map_iter_key(const cadt_map *map, cadt_map_iter it)
+void *cadt_map_iter_key([[maybe_unused]] const cadt_map *map, cadt_map_iter it)
 {
-    (void)map;
     return it.node;
 }
 
 void *cadt_map_iter_value(const cadt_map *map, cadt_map_iter it)
 {
-    if (map == NULL) {
-        return NULL;
+    if (map == nullptr) {
+        return nullptr;
     }
     return cadt_kv_value(&map->kv, it.node);
 }
 
 cadt_map_iter cadt_map_lower_bound(const cadt_map *map, const void *key)
 {
-    if (map == NULL) {
-        return iter_of(NULL, NULL);
+    if (map == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(map, cadt_tree_lower(map->tree, key));
 }
 
 cadt_map_iter cadt_map_upper_bound(const cadt_map *map, const void *key)
 {
-    if (map == NULL) {
-        return iter_of(NULL, NULL);
+    if (map == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(map, cadt_tree_upper(map->tree, key));
 }
 
 cadt_status cadt_map_validate(const cadt_map *map)
 {
-    if (map == NULL) {
+    if (map == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_tree_validate(map->tree);

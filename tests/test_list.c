@@ -5,11 +5,10 @@ typedef struct pair_item {
     int seq;
 } pair_item;
 
-static int cmp_pair(const void *a, const void *b, void *ctx)
+static int cmp_pair(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
     const pair_item *pa = (const pair_item *)a;
     const pair_item *pb = (const pair_item *)b;
-    (void)ctx;
     return (pa->key > pb->key) - (pa->key < pb->key);
 }
 
@@ -26,7 +25,7 @@ static void expect_list(cadt_list *list, const int *values, size_t count)
         i++;
     }
     CHECK(i == count);
-    CHECK(cadt_list_iter_data(cadt_list_end(list)) == NULL);
+    CHECK(cadt_list_iter_data(cadt_list_end(list)) == nullptr);
 }
 
 void test_list(void)
@@ -46,8 +45,8 @@ void test_list(void)
     track_init(&state, &alloc);
     type = type_int();
     list = cadt_list_create(&type, &alloc);
-    CHECK(list != NULL);
-    CHECK(cadt_list_pop_front(list, NULL) == CADT_ERR_EMPTY);
+    CHECK(list != nullptr);
+    CHECK(cadt_list_pop_front(list, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 5; i++) {
         values[i] = i;
         if (i % 2 == 0) {
@@ -82,7 +81,7 @@ void test_list(void)
         CHECK(*(int *)cadt_list_iter_data(it) == 1);
     }
     values[0] = 0;
-    CHECK(cadt_list_find(list, &values[0]) != NULL);
+    CHECK(cadt_list_find(list, &values[0]) != nullptr);
     cadt_list_sort(list);
     {
         int expect[] = {0, 1, 2, 3, 4};
@@ -135,10 +134,10 @@ void test_forward_list(void)
     track_init(&state, &alloc);
     type = type_int();
     list = cadt_flist_create(&type, &alloc);
-    CHECK(list != NULL);
+    CHECK(list != nullptr);
     CHECK(cadt_flist_empty(list));
     CHECK(cadt_flist_iter_eq(cadt_flist_begin(list), cadt_flist_end(list)));
-    CHECK(cadt_flist_pop_front(list, NULL) == CADT_ERR_EMPTY);
+    CHECK(cadt_flist_pop_front(list, nullptr) == CADT_ERR_EMPTY);
     for (i = 1; i <= 4; i++) {
         value = i;
         CHECK(cadt_flist_push_front(list, &value) == CADT_OK);
@@ -152,7 +151,7 @@ void test_forward_list(void)
     CHECK(cadt_flist_erase_after(list, it, &out) == CADT_OK);
     CHECK(out == 9);
     value = 8;
-    CHECK(cadt_flist_insert_after(list, cadt_flist_before_begin(list), &value, NULL) == CADT_OK);
+    CHECK(cadt_flist_insert_after(list, cadt_flist_before_begin(list), &value, nullptr) == CADT_OK);
     CHECK(*(int *)cadt_flist_front(list) == 8);
     CHECK(cadt_flist_erase_after(list, cadt_flist_before_begin(list), &out) == CADT_OK);
     CHECK(out == 8);
@@ -168,9 +167,9 @@ void test_forward_list(void)
     it = cadt_flist_next(list, it);
     CHECK(*(int *)cadt_flist_iter_data(it) == 2);
     value = 3;
-    CHECK(cadt_flist_find(list, &value) != NULL);
+    CHECK(cadt_flist_find(list, &value) != nullptr);
     value = 100;
-    CHECK(cadt_flist_find(list, &value) == NULL);
+    CHECK(cadt_flist_find(list, &value) == nullptr);
     CHECK(cadt_flist_size(list) == 4);
     cadt_flist_clear(list);
     CHECK(cadt_flist_empty(list));
@@ -180,10 +179,8 @@ void test_forward_list(void)
 
 static int g_array_dtor;
 
-static void array_dtor(void *elem, void *ctx)
+static void array_dtor([[maybe_unused]] void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)elem;
-    (void)ctx;
     g_array_dtor++;
 }
 
@@ -200,18 +197,18 @@ void test_array(void)
     track_init(&state, &alloc);
     type = type_int();
     type.destroy = array_dtor;
-    CHECK(cadt_array_create(&type, 3, NULL, &alloc) == NULL);
+    CHECK(cadt_array_create(&type, 3, nullptr, &alloc) == nullptr);
     g_array_dtor = 0;
     type = type_int();
     type.destroy = array_dtor;
     arr = cadt_array_create(&type, 4, &fill, &alloc);
-    CHECK(arr != NULL);
+    CHECK(arr != nullptr);
     CHECK(cadt_array_size(arr) == 4);
     CHECK(*(int *)cadt_array_front(arr) == 5);
     CHECK(*(int *)cadt_array_back(arr) == 5);
     CHECK(cadt_array_set(arr, 2, &value) == CADT_OK);
     CHECK(*(int *)cadt_array_at(arr, 2) == 9);
-    CHECK(cadt_array_at(arr, 4) == NULL);
+    CHECK(cadt_array_at(arr, 4) == nullptr);
     CHECK(cadt_array_set(arr, 4, &value) == CADT_ERR_RANGE);
     span = cadt_array_as_span(arr);
     CHECK(span.size == 4);
@@ -220,8 +217,8 @@ void test_array(void)
     CHECK(g_array_dtor == 5);
 
     type = type_int();
-    arr = cadt_array_create(&type, 0, NULL, &alloc);
-    CHECK(arr != NULL && cadt_array_empty(arr));
+    arr = cadt_array_create(&type, 0, nullptr, &alloc);
+    CHECK(arr != nullptr && cadt_array_empty(arr));
     cadt_array_destroy(arr);
     CHECK(!track_leaked(&state));
 }

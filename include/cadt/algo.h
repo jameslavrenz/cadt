@@ -3,7 +3,7 @@
  *
  * Algorithms over contiguous trivially copyable elements.
  * These routines move bytes with memcpy and never call element destructors.
- * A NULL compare orders raw bytes with memcmp.
+ * A nullptr compare orders raw bytes with memcmp.
  */
 #ifndef CADT_ALGO_H
 #define CADT_ALGO_H

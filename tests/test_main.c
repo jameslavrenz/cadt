@@ -6,8 +6,8 @@ int g_passed = 0;
 int main(void)
 {
     CHECK(strcmp(cadt_version(), "1.0.0") == 0);
-    CHECK(cadt_status_str(CADT_OK) != NULL);
-    CHECK(cadt_status_str(CADT_ERR_NOMEM) != NULL);
+    CHECK(cadt_status_str(CADT_OK) != nullptr);
+    CHECK(cadt_status_str(CADT_ERR_NOMEM) != nullptr);
     CHECK(cadt_hash_bytes("a", 1) != cadt_hash_bytes("b", 1));
 
     test_vector();

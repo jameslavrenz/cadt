@@ -10,7 +10,7 @@
 typedef struct cadt_dnode {
     struct cadt_dnode *prev;
     struct cadt_dnode *next;
-    _Alignas(max_align_t) unsigned char data[];
+    alignas(max_align_t) unsigned char data[];
 } cadt_dnode;
 
 struct cadt_list {
@@ -45,7 +45,7 @@ static cadt_status insert_before(cadt_list *list, cadt_dnode *pos, const void *e
         return CADT_ERR_OVERFLOW;
     }
     node = (cadt_dnode *)cadt_xalloc(list->alloc, bytes);
-    if (node == NULL) {
+    if (node == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&list->type, node->data, elem);
@@ -58,7 +58,7 @@ static cadt_status insert_before(cadt_list *list, cadt_dnode *pos, const void *e
     pos->prev->next = node;
     pos->prev = node;
     list->size++;
-    if (out_node != NULL) {
+    if (out_node != nullptr) {
         *out_node = node;
     }
     return CADT_OK;
@@ -69,20 +69,20 @@ static cadt_status erase_node(cadt_list *list, cadt_dnode *node, void *out,
 {
     cadt_dnode *after;
 
-    if (node == NULL || node == list->nil) {
+    if (node == nullptr || node == list->nil) {
         return CADT_ERR_RANGE;
     }
     after = node->next;
     node->prev->next = node->next;
     node->next->prev = node->prev;
-    if (out != NULL) {
+    if (out != nullptr) {
         memcpy(out, node->data, list->type.size);
     } else {
         cadt_type_destroy(&list->type, node->data);
     }
     cadt_xfree(list->alloc, node);
     list->size--;
-    if (next != NULL) {
+    if (next != nullptr) {
         *next = after;
     }
     return CADT_OK;
@@ -93,17 +93,17 @@ cadt_list *cadt_list_create(const cadt_type *type, const cadt_allocator *alloc)
     cadt_list *list;
 
     if (cadt_type_check(type) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     list = (cadt_list *)cadt_xalloc(alloc, sizeof(*list));
-    if (list == NULL) {
-        return NULL;
+    if (list == nullptr) {
+        return nullptr;
     }
     list->nil = (cadt_dnode *)cadt_xalloc(alloc, sizeof(*list->nil));
-    if (list->nil == NULL) {
+    if (list->nil == nullptr) {
         cadt_xfree(alloc, list);
-        return NULL;
+        return nullptr;
     }
     list->alloc = alloc;
     list->type = *type;
@@ -115,17 +115,17 @@ cadt_list *cadt_list_create(const cadt_type *type, const cadt_allocator *alloc)
 
 void cadt_list_clear(cadt_list *list)
 {
-    if (list == NULL) {
+    if (list == nullptr) {
         return;
     }
     while (list->nil->next != list->nil) {
-        (void)erase_node(list, list->nil->next, NULL, NULL);
+        (void)erase_node(list, list->nil->next, nullptr, nullptr);
     }
 }
 
 void cadt_list_destroy(cadt_list *list)
 {
-    if (list == NULL) {
+    if (list == nullptr) {
         return;
     }
     cadt_list_clear(list);
@@ -135,7 +135,7 @@ void cadt_list_destroy(cadt_list *list)
 
 size_t cadt_list_size(const cadt_list *list)
 {
-    return list == NULL ? 0 : list->size;
+    return list == nullptr ? 0 : list->size;
 }
 
 bool cadt_list_empty(const cadt_list *list)
@@ -145,32 +145,32 @@ bool cadt_list_empty(const cadt_list *list)
 
 void *cadt_list_front(const cadt_list *list)
 {
-    if (list == NULL || list->size == 0) {
-        return NULL;
+    if (list == nullptr || list->size == 0) {
+        return nullptr;
     }
     return list->nil->next->data;
 }
 
 void *cadt_list_back(const cadt_list *list)
 {
-    if (list == NULL || list->size == 0) {
-        return NULL;
+    if (list == nullptr || list->size == 0) {
+        return nullptr;
     }
     return list->nil->prev->data;
 }
 
 cadt_list_iter cadt_list_begin(const cadt_list *list)
 {
-    if (list == NULL) {
-        return iter_of(NULL, NULL);
+    if (list == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(list, list->nil->next);
 }
 
 cadt_list_iter cadt_list_end(const cadt_list *list)
 {
-    if (list == NULL) {
-        return iter_of(NULL, NULL);
+    if (list == nullptr) {
+        return iter_of(nullptr, nullptr);
     }
     return iter_of(list, list->nil);
 }
@@ -179,7 +179,7 @@ cadt_list_iter cadt_list_next(cadt_list_iter it)
 {
     cadt_dnode *node = node_of(it);
 
-    if (node == NULL) {
+    if (node == nullptr) {
         return it;
     }
     return iter_of((const cadt_list *)it.owner, node->next);
@@ -189,7 +189,7 @@ cadt_list_iter cadt_list_prev(cadt_list_iter it)
 {
     cadt_dnode *node = node_of(it);
 
-    if (node == NULL) {
+    if (node == nullptr) {
         return it;
     }
     return iter_of((const cadt_list *)it.owner, node->prev);
@@ -205,61 +205,61 @@ void *cadt_list_iter_data(cadt_list_iter it)
     const cadt_list *list = (const cadt_list *)it.owner;
     cadt_dnode *node = node_of(it);
 
-    if (list == NULL || node == NULL || node == list->nil) {
-        return NULL;
+    if (list == nullptr || node == nullptr || node == list->nil) {
+        return nullptr;
     }
     return node->data;
 }
 
 cadt_status cadt_list_push_back(cadt_list *list, const void *elem)
 {
-    if (list == NULL || elem == NULL) {
+    if (list == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
-    return insert_before(list, list->nil, elem, NULL);
+    return insert_before(list, list->nil, elem, nullptr);
 }
 
 cadt_status cadt_list_push_front(cadt_list *list, const void *elem)
 {
-    if (list == NULL || elem == NULL) {
+    if (list == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
-    return insert_before(list, list->nil->next, elem, NULL);
+    return insert_before(list, list->nil->next, elem, nullptr);
 }
 
 cadt_status cadt_list_pop_back(cadt_list *list, void *out)
 {
-    if (list == NULL) {
+    if (list == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (list->size == 0) {
         return CADT_ERR_EMPTY;
     }
-    return erase_node(list, list->nil->prev, out, NULL);
+    return erase_node(list, list->nil->prev, out, nullptr);
 }
 
 cadt_status cadt_list_pop_front(cadt_list *list, void *out)
 {
-    if (list == NULL) {
+    if (list == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (list->size == 0) {
         return CADT_ERR_EMPTY;
     }
-    return erase_node(list, list->nil->next, out, NULL);
+    return erase_node(list, list->nil->next, out, nullptr);
 }
 
 cadt_status cadt_list_insert(cadt_list *list, cadt_list_iter pos, const void *elem,
                              cadt_list_iter *out_it)
 {
-    cadt_dnode *node = NULL;
+    cadt_dnode *node = nullptr;
     cadt_status status;
 
-    if (list == NULL || elem == NULL || node_of(pos) == NULL) {
+    if (list == nullptr || elem == nullptr || node_of(pos) == nullptr) {
         return CADT_ERR_INVALID;
     }
     status = insert_before(list, node_of(pos), elem, &node);
-    if (status == CADT_OK && out_it != NULL) {
+    if (status == CADT_OK && out_it != nullptr) {
         *out_it = iter_of(list, node);
     }
     return status;
@@ -268,14 +268,14 @@ cadt_status cadt_list_insert(cadt_list *list, cadt_list_iter pos, const void *el
 cadt_status cadt_list_erase(cadt_list *list, cadt_list_iter pos, void *out,
                             cadt_list_iter *next)
 {
-    cadt_dnode *after = NULL;
+    cadt_dnode *after = nullptr;
     cadt_status status;
 
-    if (list == NULL) {
+    if (list == nullptr) {
         return CADT_ERR_INVALID;
     }
     status = erase_node(list, node_of(pos), out, &after);
-    if (status == CADT_OK && next != NULL) {
+    if (status == CADT_OK && next != nullptr) {
         *next = iter_of(list, after);
     }
     return status;
@@ -285,7 +285,7 @@ void cadt_list_reverse(cadt_list *list)
 {
     cadt_dnode *cur;
 
-    if (list == NULL || list->size < 2u) {
+    if (list == nullptr || list->size < 2u) {
         return;
     }
     cur = list->nil;
@@ -303,8 +303,8 @@ static cadt_dnode *merge_nodes(cadt_dnode *a, cadt_dnode *b, const cadt_type *ty
     cadt_dnode dummy;
     cadt_dnode *tail = &dummy;
 
-    dummy.next = NULL;
-    while (a != NULL && b != NULL) {
+    dummy.next = nullptr;
+    while (a != nullptr && b != nullptr) {
         if (cadt_type_compare(type, a->data, b->data) <= 0) {
             tail->next = a;
             a = a->next;
@@ -314,7 +314,7 @@ static cadt_dnode *merge_nodes(cadt_dnode *a, cadt_dnode *b, const cadt_type *ty
         }
         tail = tail->next;
     }
-    tail->next = a != NULL ? a : b;
+    tail->next = a != nullptr ? a : b;
     return dummy.next;
 }
 
@@ -324,17 +324,17 @@ static cadt_dnode *merge_sort_nodes(cadt_dnode *head, const cadt_type *type)
     cadt_dnode *fast;
     cadt_dnode *mid;
 
-    if (head == NULL || head->next == NULL) {
+    if (head == nullptr || head->next == nullptr) {
         return head;
     }
     slow = head;
     fast = head->next;
-    while (fast != NULL && fast->next != NULL) {
+    while (fast != nullptr && fast->next != nullptr) {
         slow = slow->next;
         fast = fast->next->next;
     }
     mid = slow->next;
-    slow->next = NULL;
+    slow->next = nullptr;
     return merge_nodes(merge_sort_nodes(head, type), merge_sort_nodes(mid, type), type);
 }
 
@@ -344,16 +344,16 @@ void cadt_list_sort(cadt_list *list)
     cadt_dnode *prev;
     cadt_dnode *cur;
 
-    if (list == NULL || list->size < 2u) {
+    if (list == nullptr || list->size < 2u) {
         return;
     }
     head = list->nil->next;
-    list->nil->prev->next = NULL;
+    list->nil->prev->next = nullptr;
     head = merge_sort_nodes(head, &list->type);
     prev = list->nil;
     cur = head;
     list->nil->next = head;
-    while (cur != NULL) {
+    while (cur != nullptr) {
         cur->prev = prev;
         prev = cur;
         cur = cur->next;
@@ -366,13 +366,13 @@ void *cadt_list_find(const cadt_list *list, const void *elem)
 {
     cadt_dnode *cur;
 
-    if (list == NULL || elem == NULL) {
-        return NULL;
+    if (list == nullptr || elem == nullptr) {
+        return nullptr;
     }
     for (cur = list->nil->next; cur != list->nil; cur = cur->next) {
         if (cadt_type_compare(&list->type, cur->data, elem) == 0) {
             return cur->data;
         }
     }
-    return NULL;
+    return nullptr;
 }

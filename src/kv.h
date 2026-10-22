@@ -25,7 +25,7 @@ static inline bool cadt_kv_init(cadt_kv *kv, const cadt_type *key, const cadt_ty
     }
     kv->key = *key;
     kv->value = *value;
-    kv->value_offset = cadt_align_up(key->size, _Alignof(max_align_t));
+    kv->value_offset = cadt_align_up(key->size, alignof(max_align_t));
     return cadt_add_size(kv->value_offset, value->size, &kv->elem_size);
 }
 
@@ -45,7 +45,7 @@ static inline cadt_status cadt_kv_pack(const cadt_allocator *alloc, const cadt_k
     cadt_status status;
 
     tmp = (unsigned char *)cadt_xalloc(alloc, kv->elem_size);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
         return CADT_ERR_NOMEM;
     }
     memset(tmp, 0, kv->elem_size);
@@ -67,7 +67,7 @@ static inline cadt_status cadt_kv_pack(const cadt_allocator *alloc, const cadt_k
 static inline void cadt_kv_pack_destroy(const cadt_allocator *alloc, const cadt_kv *kv,
                                         unsigned char *packed)
 {
-    if (packed == NULL) {
+    if (packed == nullptr) {
         return;
     }
     cadt_kv_elem_destroy(packed, (void *)kv);
@@ -76,8 +76,8 @@ static inline void cadt_kv_pack_destroy(const cadt_allocator *alloc, const cadt_
 
 static inline void *cadt_kv_value(const cadt_kv *kv, void *elem)
 {
-    if (elem == NULL) {
-        return NULL;
+    if (elem == nullptr) {
+        return nullptr;
     }
     return (unsigned char *)elem + kv->value_offset;
 }

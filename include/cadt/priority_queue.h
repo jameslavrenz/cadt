@@ -24,7 +24,7 @@ size_t cadt_pqueue_size(const cadt_pqueue *pq);
 bool cadt_pqueue_empty(const cadt_pqueue *pq);
 void cadt_pqueue_clear(cadt_pqueue *pq);
 
-/* NULL when empty. Invalidated by push and pop. */
+/* nullptr when empty. Invalidated by push and pop. */
 void *cadt_pqueue_top(const cadt_pqueue *pq);
 cadt_status cadt_pqueue_push(cadt_pqueue *pq, const void *elem);
 cadt_status cadt_pqueue_pop(cadt_pqueue *pq, void *out);

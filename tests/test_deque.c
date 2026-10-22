@@ -7,9 +7,9 @@ static void expect_deque(cadt_deque *deq, const int *values, size_t count)
     CHECK(cadt_deque_size(deq) == count);
     for (i = 0; i < count; i++) {
         int *slot = (int *)cadt_deque_at(deq, i);
-        CHECK(slot != NULL && *slot == values[i]);
+        CHECK(slot != nullptr && *slot == values[i]);
     }
-    CHECK(cadt_deque_at(deq, count) == NULL);
+    CHECK(cadt_deque_at(deq, count) == nullptr);
 }
 
 void test_deque(void)
@@ -28,9 +28,9 @@ void test_deque(void)
     track_init(&state, &alloc);
     type = type_int();
     deq = cadt_deque_create(&type, &alloc);
-    CHECK(deq != NULL);
-    CHECK(cadt_deque_pop_front(deq, NULL) == CADT_ERR_EMPTY);
-    CHECK(cadt_deque_pop_back(deq, NULL) == CADT_ERR_EMPTY);
+    CHECK(deq != nullptr);
+    CHECK(cadt_deque_pop_front(deq, nullptr) == CADT_ERR_EMPTY);
+    CHECK(cadt_deque_pop_back(deq, nullptr) == CADT_ERR_EMPTY);
     for (i = 0; i < 100; i++) {
         value = i;
         CHECK(cadt_deque_push_front(deq, &value) == CADT_OK);
@@ -61,8 +61,8 @@ void test_deque(void)
         value = i;
         CHECK(cadt_deque_push_back(deq, &value) == CADT_OK);
     }
-    CHECK(cadt_deque_pop_front(deq, NULL) == CADT_OK);
-    CHECK(cadt_deque_pop_front(deq, NULL) == CADT_OK);
+    CHECK(cadt_deque_pop_front(deq, nullptr) == CADT_OK);
+    CHECK(cadt_deque_pop_front(deq, nullptr) == CADT_OK);
     value = 42;
     CHECK(cadt_deque_insert(deq, 2, &value) == CADT_OK);
     CHECK(*(int *)cadt_deque_at(deq, 0) == 2);

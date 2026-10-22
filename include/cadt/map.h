@@ -39,7 +39,7 @@ size_t cadt_map_erase(cadt_map *map, const void *key);
 
 bool cadt_map_contains(const cadt_map *map, const void *key);
 size_t cadt_map_count(const cadt_map *map, const void *key);
-/* NULL when the key is absent. */
+/* nullptr when the key is absent. */
 void *cadt_map_get(const cadt_map *map, const void *key);
 
 cadt_map_iter cadt_map_begin(const cadt_map *map);

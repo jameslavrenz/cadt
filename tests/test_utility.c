@@ -7,22 +7,20 @@ typedef struct stable_item {
     int seq;
 } stable_item;
 
-static int cmp_stable(const void *a, const void *b, void *ctx)
+static int cmp_stable(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
     const stable_item *ia = (const stable_item *)a;
     const stable_item *ib = (const stable_item *)b;
-    (void)ctx;
     return (ia->key > ib->key) - (ia->key < ib->key);
 }
 
 static int qsort_int(const void *a, const void *b)
 {
-    return cmp_int(a, b, NULL);
+    return cmp_int(a, b, nullptr);
 }
 
-static bool is_even(const void *elem, void *ctx)
+static bool is_even(const void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     return (*(const int *)elem % 2) == 0;
 }
 
@@ -34,18 +32,15 @@ static void add_one(void *elem, void *ctx)
 
 static int g_opt_dtor;
 
-static void opt_dtor(void *elem, void *ctx)
+static void opt_dtor([[maybe_unused]] void *elem, [[maybe_unused]] void *ctx)
 {
-    (void)elem;
-    (void)ctx;
     g_opt_dtor++;
 }
 
 static int g_opt_copies;
 
-static cadt_status opt_copy(void *dst, const void *src, void *ctx)
+static cadt_status opt_copy(void *dst, const void *src, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     if (g_opt_copies <= 0) {
         return CADT_ERR_NOMEM;
     }
@@ -64,7 +59,7 @@ void test_string(void)
 
     track_init(&state, &alloc);
     a = cadt_string_create(&alloc);
-    CHECK(a != NULL && cadt_string_empty(a));
+    CHECK(a != nullptr && cadt_string_empty(a));
     CHECK(strcmp(cadt_string_c_str(a), "") == 0);
     CHECK(cadt_string_append_cstr(a, "ab") == CADT_OK);
     CHECK(cadt_string_append(a, a) == CADT_OK);
@@ -86,13 +81,13 @@ void test_string(void)
     CHECK(cadt_string_ends_with(a, "world"));
     CHECK(!cadt_string_starts_with(a, "world"));
     sub = cadt_string_substr(a, 6, CADT_NPOS);
-    CHECK(sub != NULL && cadt_string_equals_cstr(sub, "world"));
+    CHECK(sub != nullptr && cadt_string_equals_cstr(sub, "world"));
     b = cadt_string_create_cstr("hello world", &alloc);
     CHECK(cadt_string_equals(a, b));
     CHECK(cadt_string_compare(a, b) == 0);
     CHECK(cadt_string_append_cstr(b, "!") == CADT_OK);
     CHECK(cadt_string_compare(a, b) < 0);
-    CHECK(cadt_string_substr(a, 12, 1) == NULL);
+    CHECK(cadt_string_substr(a, 12, 1) == nullptr);
     CHECK(cadt_string_erase(a, 5, CADT_NPOS) == CADT_OK);
     CHECK(cadt_string_equals_cstr(a, "hello"));
     CHECK(cadt_string_reserve(a, 64) == CADT_OK);
@@ -106,7 +101,7 @@ void test_string(void)
     cadt_string_destroy(sub);
     cadt_string_destroy(b);
     cadt_string_destroy(a);
-    CHECK(cadt_string_create_n(NULL, 3, &alloc) == NULL);
+    CHECK(cadt_string_create_n(nullptr, 3, &alloc) == nullptr);
     CHECK(!track_leaked(&state));
 }
 
@@ -121,14 +116,14 @@ void test_bitset(void)
 
     track_init(&state, &alloc);
     a = cadt_bitset_create(0, &alloc);
-    CHECK(a != NULL && cadt_bitset_none(a) && cadt_bitset_all(a) && !cadt_bitset_any(a));
+    CHECK(a != nullptr && cadt_bitset_none(a) && cadt_bitset_all(a) && !cadt_bitset_any(a));
     CHECK(cadt_bitset_format(a, text, 1) == CADT_OK);
     CHECK(text[0] == '\0');
     cadt_bitset_destroy(a);
 
     a = cadt_bitset_create(70, &alloc);
     b = cadt_bitset_create(70, &alloc);
-    CHECK(a != NULL && b != NULL);
+    CHECK(a != nullptr && b != nullptr);
     CHECK(cadt_bitset_set(a, 70, true) == CADT_ERR_RANGE);
     CHECK(!cadt_bitset_test(a, 70));
     CHECK(cadt_bitset_set(a, 0, true) == CADT_OK);
@@ -160,7 +155,7 @@ void test_bitset(void)
     CHECK(strlen(text) == 70 && text[0] == '0' && text[69] == '0');
     {
         cadt_bitset *short_set = cadt_bitset_create(3, &alloc);
-        CHECK(short_set != NULL);
+        CHECK(short_set != nullptr);
         CHECK(cadt_bitset_and(a, short_set) == CADT_ERR_INVALID);
         cadt_bitset_destroy(short_set);
     }
@@ -181,7 +176,7 @@ void test_optional(void)
     track_init(&state, &alloc);
     type = type_int();
     opt = cadt_optional_create(&type, &alloc);
-    CHECK(opt != NULL && !cadt_optional_has_value(opt));
+    CHECK(opt != nullptr && !cadt_optional_has_value(opt));
     CHECK(cadt_optional_take(opt, &out) == CADT_ERR_EMPTY);
     CHECK(cadt_optional_set(opt, &value) == CADT_OK);
     CHECK(cadt_optional_has_value(opt) && *(int *)cadt_optional_value(opt) == 4);
@@ -230,32 +225,32 @@ void test_algo(void)
         expect[i] = values[i];
     }
     qsort(expect, 200, sizeof(int), qsort_int);
-    CHECK(cadt_sort(values, 200, sizeof(int), cmp_int, NULL) == CADT_OK);
+    CHECK(cadt_sort(values, 200, sizeof(int), cmp_int, nullptr) == CADT_OK);
     CHECK(memcmp(values, expect, sizeof(values)) == 0);
-    CHECK(cadt_is_sorted(values, 200, sizeof(int), cmp_int, NULL));
+    CHECK(cadt_is_sorted(values, 200, sizeof(int), cmp_int, nullptr));
     key = values[10];
-    CHECK(cadt_binary_search(values, 200, sizeof(int), &key, cmp_int, NULL));
+    CHECK(cadt_binary_search(values, 200, sizeof(int), &key, cmp_int, nullptr));
     key = 100000;
-    CHECK(!cadt_binary_search(values, 200, sizeof(int), &key, cmp_int, NULL));
+    CHECK(!cadt_binary_search(values, 200, sizeof(int), &key, cmp_int, nullptr));
 
     {
         int sample[] = {1, 3, 3, 5, 8};
         key = 3;
-        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, NULL) == 1);
-        CHECK(cadt_upper_bound(sample, 5, sizeof(int), &key, cmp_int, NULL) == 3);
+        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 1);
+        CHECK(cadt_upper_bound(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 3);
         key = 0;
-        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, NULL) == 0);
+        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 0);
         key = 4;
-        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, NULL) == 3);
+        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 3);
         key = 9;
-        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, NULL) == 5);
-        CHECK(cadt_count(sample, 5, sizeof(int), &key, cmp_int, NULL) == 0);
+        CHECK(cadt_lower_bound(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 5);
+        CHECK(cadt_count(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 0);
         key = 3;
-        CHECK(cadt_count(sample, 5, sizeof(int), &key, cmp_int, NULL) == 2);
-        CHECK(*(int *)cadt_min_element(sample, 5, sizeof(int), cmp_int, NULL) == 1);
-        CHECK(*(int *)cadt_max_element(sample, 5, sizeof(int), cmp_int, NULL) == 8);
-        CHECK(cadt_count_if(sample, 5, sizeof(int), is_even, NULL) == 1);
-        CHECK(*(int *)cadt_find_if(sample, 5, sizeof(int), is_even, NULL) == 8);
+        CHECK(cadt_count(sample, 5, sizeof(int), &key, cmp_int, nullptr) == 2);
+        CHECK(*(int *)cadt_min_element(sample, 5, sizeof(int), cmp_int, nullptr) == 1);
+        CHECK(*(int *)cadt_max_element(sample, 5, sizeof(int), cmp_int, nullptr) == 8);
+        CHECK(cadt_count_if(sample, 5, sizeof(int), is_even, nullptr) == 1);
+        CHECK(*(int *)cadt_find_if(sample, 5, sizeof(int), is_even, nullptr) == 8);
     }
 
     items[0].key = 1;
@@ -268,7 +263,7 @@ void test_algo(void)
     items[3].seq = 3;
     items[4].key = 1;
     items[4].seq = 4;
-    CHECK(cadt_stable_sort(items, 5, sizeof(items[0]), cmp_stable, NULL) == CADT_OK);
+    CHECK(cadt_stable_sort(items, 5, sizeof(items[0]), cmp_stable, nullptr) == CADT_OK);
     CHECK(items[0].seq == 0 && items[1].seq == 2 && items[2].seq == 4);
     CHECK(items[3].seq == 1 && items[4].seq == 3);
 
@@ -278,23 +273,23 @@ void test_algo(void)
         int copy[] = {1, 2, 3, 4};
         int fill_value = 7;
         cadt_reverse(seq, 4, sizeof(int));
-        CHECK(cadt_equal(seq, rev, 4, sizeof(int), cmp_int, NULL));
+        CHECK(cadt_equal(seq, rev, 4, sizeof(int), cmp_int, nullptr));
         cadt_fill(seq, 4, sizeof(int), &fill_value);
         CHECK(seq[0] == 7 && seq[3] == 7);
         total = 0;
         cadt_for_each(copy, 4, sizeof(int), add_one, &total);
         CHECK(total == 10);
-        CHECK(cadt_find(copy, 4, sizeof(int), &copy[2], cmp_int, NULL) == &copy[2]);
-        CHECK(cadt_sort(NULL, 0, sizeof(int), cmp_int, NULL) == CADT_OK);
-        CHECK(cadt_is_sorted(NULL, 0, sizeof(int), cmp_int, NULL));
-        CHECK(cadt_sort(copy, 4, 0, cmp_int, NULL) == CADT_ERR_INVALID);
+        CHECK(cadt_find(copy, 4, sizeof(int), &copy[2], cmp_int, nullptr) == &copy[2]);
+        CHECK(cadt_sort(nullptr, 0, sizeof(int), cmp_int, nullptr) == CADT_OK);
+        CHECK(cadt_is_sorted(nullptr, 0, sizeof(int), cmp_int, nullptr));
+        CHECK(cadt_sort(copy, 4, 0, cmp_int, nullptr) == CADT_ERR_INVALID);
     }
 
     for (i = 0; i < 50; i++) {
         values[i] = (int)(i * 3u);
     }
-    CHECK(cadt_sort(values, 50, sizeof(int), NULL, NULL) == CADT_OK);
-    CHECK(cadt_is_sorted(values, 50, sizeof(int), NULL, NULL));
+    CHECK(cadt_sort(values, 50, sizeof(int), nullptr, nullptr) == CADT_OK);
+    CHECK(cadt_is_sorted(values, 50, sizeof(int), nullptr, nullptr));
 }
 
 void test_span(void)
@@ -306,12 +301,12 @@ void test_span(void)
 
     CHECK(span.size == 5);
     CHECK(*(int *)cadt_span_at(span, 0) == 1);
-    CHECK(cadt_span_at(span, 5) == NULL);
+    CHECK(cadt_span_at(span, 5) == nullptr);
     mid = cadt_span_sub(span, 1, 3);
     CHECK(mid.size == 3 && *(int *)cadt_span_at(mid, 0) == 2);
     mid = cadt_span_sub(span, 2, CADT_NPOS);
     CHECK(mid.size == 3 && *(int *)cadt_span_at(mid, 2) == 5);
     bad = cadt_span_sub(span, 3, 5);
     CHECK(bad.size == 0);
-    CHECK(cadt_span_empty(cadt_span_make(NULL, 0, sizeof(int))));
+    CHECK(cadt_span_empty(cadt_span_make(nullptr, 0, sizeof(int))));
 }

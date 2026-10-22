@@ -47,24 +47,24 @@ cadt_bitset *cadt_bitset_create(size_t nbits, const cadt_allocator *alloc)
     alloc = cadt_alloc_or_default(alloc);
     nwords = (nbits + 63u) / 64u;
     bs = (cadt_bitset *)cadt_xalloc(alloc, sizeof(*bs));
-    if (bs == NULL) {
-        return NULL;
+    if (bs == nullptr) {
+        return nullptr;
     }
     bs->alloc = alloc;
     bs->nbits = nbits;
     bs->nwords = nwords;
-    bs->words = NULL;
+    bs->words = nullptr;
     if (nwords == 0) {
         return bs;
     }
     if (!cadt_mul_size(nwords, sizeof(uint64_t), &bytes)) {
         cadt_xfree(alloc, bs);
-        return NULL;
+        return nullptr;
     }
     bs->words = (uint64_t *)cadt_xalloc(alloc, bytes);
-    if (bs->words == NULL) {
+    if (bs->words == nullptr) {
         cadt_xfree(alloc, bs);
-        return NULL;
+        return nullptr;
     }
     memset(bs->words, 0, bytes);
     return bs;
@@ -72,7 +72,7 @@ cadt_bitset *cadt_bitset_create(size_t nbits, const cadt_allocator *alloc)
 
 void cadt_bitset_destroy(cadt_bitset *bs)
 {
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return;
     }
     cadt_xfree(bs->alloc, bs->words);
@@ -81,7 +81,7 @@ void cadt_bitset_destroy(cadt_bitset *bs)
 
 size_t cadt_bitset_size(const cadt_bitset *bs)
 {
-    return bs == NULL ? 0 : bs->nbits;
+    return bs == nullptr ? 0 : bs->nbits;
 }
 
 bool cadt_bitset_test(const cadt_bitset *bs, size_t index)
@@ -89,7 +89,7 @@ bool cadt_bitset_test(const cadt_bitset *bs, size_t index)
     size_t word;
     unsigned bit;
 
-    if (bs == NULL || index >= bs->nbits) {
+    if (bs == nullptr || index >= bs->nbits) {
         return false;
     }
     word = index / 64u;
@@ -102,7 +102,7 @@ cadt_status cadt_bitset_set(cadt_bitset *bs, size_t index, bool value)
     size_t word;
     unsigned bit;
 
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index >= bs->nbits) {
@@ -120,7 +120,7 @@ cadt_status cadt_bitset_set(cadt_bitset *bs, size_t index, bool value)
 
 cadt_status cadt_bitset_flip(cadt_bitset *bs, size_t index)
 {
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index >= bs->nbits) {
@@ -131,7 +131,7 @@ cadt_status cadt_bitset_flip(cadt_bitset *bs, size_t index)
 
 void cadt_bitset_set_all(cadt_bitset *bs, bool value)
 {
-    if (bs == NULL || bs->nwords == 0) {
+    if (bs == nullptr || bs->nwords == 0) {
         return;
     }
     memset(bs->words, value ? 0xFF : 0x00, bs->nwords * sizeof(uint64_t));
@@ -144,7 +144,7 @@ void cadt_bitset_flip_all(cadt_bitset *bs)
 {
     size_t i;
 
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return;
     }
     for (i = 0; i < bs->nwords; i++) {
@@ -158,7 +158,7 @@ size_t cadt_bitset_count(const cadt_bitset *bs)
     size_t i;
     size_t total = 0;
 
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return 0;
     }
     for (i = 0; i < bs->nwords; i++) {
@@ -171,7 +171,7 @@ bool cadt_bitset_any(const cadt_bitset *bs)
 {
     size_t i;
 
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return false;
     }
     for (i = 0; i < bs->nwords; i++) {
@@ -189,7 +189,7 @@ bool cadt_bitset_none(const cadt_bitset *bs)
 
 bool cadt_bitset_all(const cadt_bitset *bs)
 {
-    if (bs == NULL) {
+    if (bs == nullptr) {
         return false;
     }
     return cadt_bitset_count(bs) == bs->nbits;
@@ -199,7 +199,7 @@ static cadt_status bitwise(cadt_bitset *dst, const cadt_bitset *src, int op)
 {
     size_t i;
 
-    if (dst == NULL || src == NULL || dst->nbits != src->nbits) {
+    if (dst == nullptr || src == nullptr || dst->nbits != src->nbits) {
         return CADT_ERR_INVALID;
     }
     for (i = 0; i < dst->nwords; i++) {
@@ -233,7 +233,7 @@ cadt_status cadt_bitset_format(const cadt_bitset *bs, char *buf, size_t buflen)
 {
     size_t i;
 
-    if (bs == NULL || buf == NULL) {
+    if (bs == nullptr || buf == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (buflen < bs->nbits + 1u) {

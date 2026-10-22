@@ -11,7 +11,7 @@ struct track_hdr {
 
 static size_t header_bytes(void)
 {
-    size_t align = _Alignof(max_align_t);
+    size_t align = alignof(max_align_t);
     size_t size = sizeof(struct track_hdr);
 
     return (size + align - 1u) & ~(align - 1u);
@@ -29,17 +29,17 @@ static void *track_alloc(size_t size, void *ctx)
     struct track_hdr *hdr;
 
     if (size == 0) {
-        return NULL;
+        return nullptr;
     }
     raw = (unsigned char *)malloc(header_bytes() + size);
-    if (raw == NULL) {
-        return NULL;
+    if (raw == nullptr) {
+        return nullptr;
     }
     hdr = (struct track_hdr *)raw;
     hdr->size = size;
-    hdr->prev = NULL;
+    hdr->prev = nullptr;
     hdr->next = state->head;
-    if (state->head != NULL) {
+    if (state->head != nullptr) {
         state->head->prev = hdr;
     }
     state->head = hdr;
@@ -54,16 +54,16 @@ static void track_free(void *ptr, void *ctx)
     track_state *state = (track_state *)ctx;
     struct track_hdr *hdr;
 
-    if (ptr == NULL) {
+    if (ptr == nullptr) {
         return;
     }
     hdr = header_of(ptr);
-    if (hdr->prev != NULL) {
+    if (hdr->prev != nullptr) {
         hdr->prev->next = hdr->next;
     } else {
         state->head = hdr->next;
     }
-    if (hdr->next != NULL) {
+    if (hdr->next != nullptr) {
         hdr->next->prev = hdr->prev;
     }
     state->live_bytes -= hdr->size;
@@ -79,17 +79,17 @@ static void *track_realloc(void *ptr, size_t old_size, size_t new_size, void *ct
 
     if (new_size == 0) {
         track_free(ptr, ctx);
-        return NULL;
+        return nullptr;
     }
     fresh = track_alloc(new_size, ctx);
-    if (fresh == NULL) {
-        return NULL;
+    if (fresh == nullptr) {
+        return nullptr;
     }
-    if (ptr != NULL && old_size > 0) {
+    if (ptr != nullptr && old_size > 0) {
         copy_n = old_size < new_size ? old_size : new_size;
         memcpy(fresh, ptr, copy_n);
     }
-    if (ptr != NULL) {
+    if (ptr != nullptr) {
         track_free(ptr, ctx);
     }
     return fresh;

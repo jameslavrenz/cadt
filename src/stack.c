@@ -17,21 +17,21 @@ cadt_stack *cadt_stack_create(const cadt_type *type, const cadt_allocator *alloc
 
     alloc = cadt_alloc_or_default(alloc);
     stack = (cadt_stack *)cadt_xalloc(alloc, sizeof(*stack));
-    if (stack == NULL) {
-        return NULL;
+    if (stack == nullptr) {
+        return nullptr;
     }
     stack->alloc = alloc;
     stack->data = cadt_vector_create(type, alloc);
-    if (stack->data == NULL) {
+    if (stack->data == nullptr) {
         cadt_xfree(alloc, stack);
-        return NULL;
+        return nullptr;
     }
     return stack;
 }
 
 void cadt_stack_destroy(cadt_stack *stack)
 {
-    if (stack == NULL) {
+    if (stack == nullptr) {
         return;
     }
     cadt_vector_destroy(stack->data);
@@ -40,7 +40,7 @@ void cadt_stack_destroy(cadt_stack *stack)
 
 size_t cadt_stack_size(const cadt_stack *stack)
 {
-    return stack == NULL ? 0 : cadt_vector_size(stack->data);
+    return stack == nullptr ? 0 : cadt_vector_size(stack->data);
 }
 
 bool cadt_stack_empty(const cadt_stack *stack)
@@ -50,19 +50,19 @@ bool cadt_stack_empty(const cadt_stack *stack)
 
 void cadt_stack_clear(cadt_stack *stack)
 {
-    if (stack != NULL) {
+    if (stack != nullptr) {
         cadt_vector_clear(stack->data);
     }
 }
 
 void *cadt_stack_top(const cadt_stack *stack)
 {
-    return stack == NULL ? NULL : cadt_vector_back(stack->data);
+    return stack == nullptr ? nullptr : cadt_vector_back(stack->data);
 }
 
 cadt_status cadt_stack_push(cadt_stack *stack, const void *elem)
 {
-    if (stack == NULL) {
+    if (stack == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_vector_push_back(stack->data, elem);
@@ -70,7 +70,7 @@ cadt_status cadt_stack_push(cadt_stack *stack, const void *elem)
 
 cadt_status cadt_stack_pop(cadt_stack *stack, void *out)
 {
-    if (stack == NULL) {
+    if (stack == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_vector_pop_back(stack->data, out);

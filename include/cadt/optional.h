@@ -18,7 +18,7 @@ cadt_optional *cadt_optional_create(const cadt_type *type, const cadt_allocator 
 void cadt_optional_destroy(cadt_optional *opt);
 
 bool cadt_optional_has_value(const cadt_optional *opt);
-/* NULL when empty. Invalidated by set, reset, and destroy. */
+/* nullptr when empty. Invalidated by set, reset, and destroy. */
 void *cadt_optional_value(const cadt_optional *opt);
 
 cadt_status cadt_optional_set(cadt_optional *opt, const void *elem);

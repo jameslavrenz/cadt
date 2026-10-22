@@ -19,11 +19,10 @@ extern int g_passed;
         }                                                                   \
     } while (0)
 
-static inline int cmp_int(const void *a, const void *b, void *ctx)
+static inline int cmp_int(const void *a, const void *b, [[maybe_unused]] void *ctx)
 {
     int ia = *(const int *)a;
     int ib = *(const int *)b;
-    (void)ctx;
     return (ia > ib) - (ia < ib);
 }
 

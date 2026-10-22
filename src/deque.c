@@ -41,7 +41,7 @@ static cadt_status relayout(cadt_deque *deq, size_t new_cap)
         return CADT_ERR_OVERFLOW;
     }
     fresh = (unsigned char *)cadt_xalloc(deq->alloc, bytes);
-    if (fresh == NULL) {
+    if (fresh == nullptr) {
         return CADT_ERR_NOMEM;
     }
     for (i = 0; i < deq->size; i++) {
@@ -81,16 +81,16 @@ cadt_deque *cadt_deque_create(const cadt_type *type, const cadt_allocator *alloc
     cadt_deque *deq;
 
     if (cadt_type_check(type) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     deq = (cadt_deque *)cadt_xalloc(alloc, sizeof(*deq));
-    if (deq == NULL) {
-        return NULL;
+    if (deq == nullptr) {
+        return nullptr;
     }
     deq->alloc = alloc;
     deq->type = *type;
-    deq->data = NULL;
+    deq->data = nullptr;
     deq->capacity = 0;
     deq->head = 0;
     deq->size = 0;
@@ -101,7 +101,7 @@ void cadt_deque_clear(cadt_deque *deq)
 {
     size_t i;
 
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return;
     }
     for (i = 0; i < deq->size; i++) {
@@ -113,7 +113,7 @@ void cadt_deque_clear(cadt_deque *deq)
 
 void cadt_deque_destroy(cadt_deque *deq)
 {
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return;
     }
     cadt_deque_clear(deq);
@@ -123,12 +123,12 @@ void cadt_deque_destroy(cadt_deque *deq)
 
 size_t cadt_deque_size(const cadt_deque *deq)
 {
-    return deq == NULL ? 0 : deq->size;
+    return deq == nullptr ? 0 : deq->size;
 }
 
 size_t cadt_deque_capacity(const cadt_deque *deq)
 {
-    return deq == NULL ? 0 : deq->capacity;
+    return deq == nullptr ? 0 : deq->capacity;
 }
 
 bool cadt_deque_empty(const cadt_deque *deq)
@@ -138,7 +138,7 @@ bool cadt_deque_empty(const cadt_deque *deq)
 
 cadt_status cadt_deque_reserve(cadt_deque *deq, size_t capacity)
 {
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (capacity <= deq->capacity) {
@@ -149,8 +149,8 @@ cadt_status cadt_deque_reserve(cadt_deque *deq, size_t capacity)
 
 void *cadt_deque_at(const cadt_deque *deq, size_t index)
 {
-    if (deq == NULL || index >= deq->size) {
-        return NULL;
+    if (deq == nullptr || index >= deq->size) {
+        return nullptr;
     }
     return at_ptr(deq, index);
 }
@@ -162,8 +162,8 @@ void *cadt_deque_front(const cadt_deque *deq)
 
 void *cadt_deque_back(const cadt_deque *deq)
 {
-    if (deq == NULL || deq->size == 0) {
-        return NULL;
+    if (deq == nullptr || deq->size == 0) {
+        return nullptr;
     }
     return at_ptr(deq, deq->size - 1u);
 }
@@ -173,7 +173,7 @@ cadt_status cadt_deque_push_back(cadt_deque *deq, const void *elem)
     cadt_status status;
     size_t index;
 
-    if (deq == NULL || elem == NULL) {
+    if (deq == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (deq->size == deq->capacity) {
@@ -202,7 +202,7 @@ cadt_status cadt_deque_push_front(cadt_deque *deq, const void *elem)
     cadt_status status;
     size_t head;
 
-    if (deq == NULL || elem == NULL) {
+    if (deq == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (deq->size == deq->capacity) {
@@ -228,14 +228,14 @@ cadt_status cadt_deque_pop_back(cadt_deque *deq, void *out)
 {
     unsigned char *elem;
 
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (deq->size == 0) {
         return CADT_ERR_EMPTY;
     }
     elem = at_ptr(deq, deq->size - 1u);
-    if (out != NULL) {
+    if (out != nullptr) {
         memcpy(out, elem, deq->type.size);
     } else {
         cadt_type_destroy(&deq->type, elem);
@@ -248,14 +248,14 @@ cadt_status cadt_deque_pop_front(cadt_deque *deq, void *out)
 {
     unsigned char *elem;
 
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (deq->size == 0) {
         return CADT_ERR_EMPTY;
     }
     elem = at_ptr(deq, 0);
-    if (out != NULL) {
+    if (out != nullptr) {
         memcpy(out, elem, deq->type.size);
     } else {
         cadt_type_destroy(&deq->type, elem);
@@ -273,7 +273,7 @@ cadt_status cadt_deque_insert(cadt_deque *deq, size_t index, const void *elem)
     cadt_status status;
     size_t i;
 
-    if (deq == NULL || elem == NULL) {
+    if (deq == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index > deq->size) {
@@ -311,7 +311,7 @@ cadt_status cadt_deque_erase(cadt_deque *deq, size_t index, void *out)
     size_t i;
     cadt_status status;
 
-    if (deq == NULL) {
+    if (deq == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index >= deq->size) {
@@ -327,7 +327,7 @@ cadt_status cadt_deque_erase(cadt_deque *deq, size_t index, void *out)
     if (status != CADT_OK) {
         return status;
     }
-    if (out != NULL) {
+    if (out != nullptr) {
         memcpy(out, at_ptr(deq, index), deq->type.size);
     } else {
         cadt_type_destroy(&deq->type, at_ptr(deq, index));

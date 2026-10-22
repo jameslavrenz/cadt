@@ -35,7 +35,7 @@ void cadt_set_clear(cadt_set *set);
 cadt_status cadt_set_insert(cadt_set *set, const void *key);
 /* Number of elements removed (all equivalents). */
 size_t cadt_set_erase(cadt_set *set, const void *key);
-/* Removes one equivalent element. out may be NULL. */
+/* Removes one equivalent element. out may be nullptr. */
 cadt_status cadt_set_erase_one(cadt_set *set, const void *key, void *out);
 
 bool cadt_set_contains(const cadt_set *set, const void *key);

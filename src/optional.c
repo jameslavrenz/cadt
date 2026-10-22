@@ -16,32 +16,32 @@ cadt_optional *cadt_optional_create(const cadt_type *type, const cadt_allocator 
     cadt_optional *opt;
 
     if (cadt_type_check(type) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     opt = (cadt_optional *)cadt_xalloc(alloc, sizeof(*opt));
-    if (opt == NULL) {
-        return NULL;
+    if (opt == nullptr) {
+        return nullptr;
     }
     opt->alloc = alloc;
     opt->type = *type;
-    opt->value = NULL;
+    opt->value = nullptr;
     return opt;
 }
 
 void cadt_optional_reset(cadt_optional *opt)
 {
-    if (opt == NULL || opt->value == NULL) {
+    if (opt == nullptr || opt->value == nullptr) {
         return;
     }
     cadt_type_destroy(&opt->type, opt->value);
     cadt_xfree(opt->alloc, opt->value);
-    opt->value = NULL;
+    opt->value = nullptr;
 }
 
 void cadt_optional_destroy(cadt_optional *opt)
 {
-    if (opt == NULL) {
+    if (opt == nullptr) {
         return;
     }
     cadt_optional_reset(opt);
@@ -50,12 +50,12 @@ void cadt_optional_destroy(cadt_optional *opt)
 
 bool cadt_optional_has_value(const cadt_optional *opt)
 {
-    return opt != NULL && opt->value != NULL;
+    return opt != nullptr && opt->value != nullptr;
 }
 
 void *cadt_optional_value(const cadt_optional *opt)
 {
-    return opt == NULL ? NULL : opt->value;
+    return opt == nullptr ? nullptr : opt->value;
 }
 
 cadt_status cadt_optional_set(cadt_optional *opt, const void *elem)
@@ -63,11 +63,11 @@ cadt_status cadt_optional_set(cadt_optional *opt, const void *elem)
     void *fresh;
     cadt_status status;
 
-    if (opt == NULL || elem == NULL) {
+    if (opt == nullptr || elem == nullptr) {
         return CADT_ERR_INVALID;
     }
     fresh = cadt_xalloc(opt->alloc, opt->type.size);
-    if (fresh == NULL) {
+    if (fresh == nullptr) {
         return CADT_ERR_NOMEM;
     }
     status = cadt_type_copy(&opt->type, fresh, elem);
@@ -82,14 +82,14 @@ cadt_status cadt_optional_set(cadt_optional *opt, const void *elem)
 
 cadt_status cadt_optional_take(cadt_optional *opt, void *out)
 {
-    if (opt == NULL || out == NULL) {
+    if (opt == nullptr || out == nullptr) {
         return CADT_ERR_INVALID;
     }
-    if (opt->value == NULL) {
+    if (opt->value == nullptr) {
         return CADT_ERR_EMPTY;
     }
     memcpy(out, opt->value, opt->type.size);
     cadt_xfree(opt->alloc, opt->value);
-    opt->value = NULL;
+    opt->value = nullptr;
     return CADT_OK;
 }

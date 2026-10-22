@@ -10,7 +10,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,25 +29,25 @@ typedef enum cadt_status {
     CADT_ERR_EMPTY,     /* operation needs an element and the container is empty */
     CADT_ERR_NOT_FOUND, /* key is not present */
     CADT_ERR_EXISTS,    /* unique container already holds an equivalent key */
-    CADT_ERR_INVALID,   /* NULL argument or type descriptor the operation cannot use */
+    CADT_ERR_INVALID,   /* nullptr argument or type descriptor the operation cannot use */
     CADT_ERR_OVERFLOW   /* size computation would overflow size_t */
 } cadt_status;
 
-/* Human-readable name for a status code. Never returns NULL. */
+/* Human-readable name for a status code. Never returns nullptr. */
 const char *cadt_status_str(cadt_status status);
 
-/* Library version "major.minor.patch". Never returns NULL. */
+/* Library version "major.minor.patch". Never returns nullptr. */
 const char *cadt_version(void);
 
 /*
  * Memory source for a container. The allocator object must outlive every
- * container created with it. NULL means the process malloc/realloc/free.
+ * container created with it. nullptr means the process malloc/realloc/free.
  *
  * alloc() is never called with size 0.
- * realloc() receives the previous allocation size in bytes. It returns NULL
- * on failure and leaves the old block allocated. A NULL realloc hook is
+ * realloc() receives the previous allocation size in bytes. It returns nullptr
+ * on failure and leaves the old block allocated. A nullptr realloc hook is
  * emulated with alloc, copy, and free.
- * free() is never called with a NULL pointer.
+ * free() is never called with nullptr.
  */
 typedef struct cadt_allocator {
     void *(*alloc)(size_t size, void *ctx);
@@ -63,15 +62,15 @@ const cadt_allocator *cadt_default_allocator(void);
  * Element protocol.
  *
  * size      byte size of one element (sizeof the value)
- * copy      dst/src are element pointers. NULL copies with memcpy.
+ * copy      dst/src are element pointers. nullptr copies with memcpy.
  *           On failure dst is left uninitialized. The source stays owned
  *           by the caller.
- * destroy   called when a container drops an element it owns. NULL is a no-op.
+ * destroy   called when a container drops an element it owns. nullptr is a no-op.
  *           Not called when an operation moves the element out to the caller.
- * compare   <0, 0, >0 like memcmp. NULL compares the raw bytes.
- *           Ordered containers and priority queues reject a NULL compare
+ * compare   <0, 0, >0 like memcmp. nullptr compares the raw bytes.
+ *           Ordered containers and priority queues reject a nullptr compare
  *           because byte order is not numeric order.
- * hash      64-bit hash of one element. NULL hashes the raw bytes (FNV-1a).
+ * hash      64-bit hash of one element. nullptr hashes the raw bytes (FNV-1a).
  * ctx       passed through to the callbacks. Must outlive the container.
  *
  * Elements are stored by value. Pointers inside an element are owned by the

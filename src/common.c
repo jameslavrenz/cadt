@@ -34,22 +34,19 @@ const char *cadt_version(void)
     return "1.0.0";
 }
 
-static void *default_alloc(size_t size, void *ctx)
+static void *default_alloc(size_t size, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     return malloc(size);
 }
 
-static void *default_realloc(void *ptr, size_t old_size, size_t new_size, void *ctx)
+static void *default_realloc(void *ptr, [[maybe_unused]] size_t old_size, size_t new_size,
+                             [[maybe_unused]] void *ctx)
 {
-    (void)old_size;
-    (void)ctx;
     return realloc(ptr, new_size);
 }
 
-static void default_free(void *ptr, void *ctx)
+static void default_free(void *ptr, [[maybe_unused]] void *ctx)
 {
-    (void)ctx;
     free(ptr);
 }
 
@@ -59,27 +56,27 @@ const cadt_allocator *cadt_default_allocator(void)
         default_alloc,
         default_realloc,
         default_free,
-        NULL
+        nullptr
     };
     return &allocator;
 }
 
 const cadt_allocator *cadt_alloc_or_default(const cadt_allocator *alloc)
 {
-    return alloc != NULL ? alloc : cadt_default_allocator();
+    return alloc != nullptr ? alloc : cadt_default_allocator();
 }
 
 void *cadt_xalloc(const cadt_allocator *alloc, size_t size)
 {
     if (size == 0) {
-        return NULL;
+        return nullptr;
     }
     return alloc->alloc(size, alloc->ctx);
 }
 
 void cadt_xfree(const cadt_allocator *alloc, void *ptr)
 {
-    if (ptr != NULL) {
+    if (ptr != nullptr) {
         alloc->free(ptr, alloc->ctx);
     }
 }
@@ -92,16 +89,16 @@ void *cadt_xrealloc(const cadt_allocator *alloc, void *ptr, size_t old_size,
 
     if (new_size == 0) {
         cadt_xfree(alloc, ptr);
-        return NULL;
+        return nullptr;
     }
-    if (alloc->realloc != NULL) {
+    if (alloc->realloc != nullptr) {
         return alloc->realloc(ptr, old_size, new_size, alloc->ctx);
     }
     fresh = alloc->alloc(new_size, alloc->ctx);
-    if (fresh == NULL) {
-        return NULL;
+    if (fresh == nullptr) {
+        return nullptr;
     }
-    if (ptr != NULL && old_size > 0) {
+    if (ptr != nullptr && old_size > 0) {
         copy_n = old_size < new_size ? old_size : new_size;
         memcpy(fresh, ptr, copy_n);
         alloc->free(ptr, alloc->ctx);
@@ -129,7 +126,7 @@ bool cadt_add_size(size_t a, size_t b, size_t *out)
 
 cadt_status cadt_type_check(const cadt_type *type)
 {
-    if (type == NULL || type->size == 0) {
+    if (type == nullptr || type->size == 0) {
         return CADT_ERR_INVALID;
     }
     return CADT_OK;
@@ -137,7 +134,7 @@ cadt_status cadt_type_check(const cadt_type *type)
 
 cadt_status cadt_type_copy(const cadt_type *type, void *dst, const void *src)
 {
-    if (type->copy != NULL) {
+    if (type->copy != nullptr) {
         return type->copy(dst, src, type->ctx);
     }
     memcpy(dst, src, type->size);
@@ -146,14 +143,14 @@ cadt_status cadt_type_copy(const cadt_type *type, void *dst, const void *src)
 
 void cadt_type_destroy(const cadt_type *type, void *elem)
 {
-    if (type->destroy != NULL) {
+    if (type->destroy != nullptr) {
         type->destroy(elem, type->ctx);
     }
 }
 
 int cadt_type_compare(const cadt_type *type, const void *a, const void *b)
 {
-    if (type->compare != NULL) {
+    if (type->compare != nullptr) {
         return type->compare(a, b, type->ctx);
     }
     return memcmp(a, b, type->size);
@@ -161,7 +158,7 @@ int cadt_type_compare(const cadt_type *type, const void *a, const void *b)
 
 uint64_t cadt_type_hash(const cadt_type *type, const void *elem)
 {
-    if (type->hash != NULL) {
+    if (type->hash != nullptr) {
         return type->hash(elem, type->ctx);
     }
     return cadt_hash_bytes(elem, type->size);

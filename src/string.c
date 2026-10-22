@@ -38,7 +38,7 @@ static cadt_status ensure_chars(cadt_string *str, size_t chars)
         return CADT_ERR_OVERFLOW;
     }
     fresh = (char *)cadt_xrealloc(str->alloc, str->data, old_bytes, new_bytes);
-    if (fresh == NULL) {
+    if (fresh == nullptr) {
         return CADT_ERR_NOMEM;
     }
     str->data = fresh;
@@ -52,13 +52,13 @@ cadt_string *cadt_string_create(const cadt_allocator *alloc)
 
     alloc = cadt_alloc_or_default(alloc);
     str = (cadt_string *)cadt_xalloc(alloc, sizeof(*str));
-    if (str == NULL) {
-        return NULL;
+    if (str == nullptr) {
+        return nullptr;
     }
     str->data = (char *)cadt_xalloc(alloc, 1u);
-    if (str->data == NULL) {
+    if (str->data == nullptr) {
         cadt_xfree(alloc, str);
-        return NULL;
+        return nullptr;
     }
     str->alloc = alloc;
     str->data[0] = '\0';
@@ -72,32 +72,32 @@ cadt_string *cadt_string_create_n(const char *data, size_t length, const cadt_al
     cadt_string *str;
     cadt_status status;
 
-    if (data == NULL && length > 0) {
-        return NULL;
+    if (data == nullptr && length > 0) {
+        return nullptr;
     }
     str = cadt_string_create(alloc);
-    if (str == NULL) {
-        return NULL;
+    if (str == nullptr) {
+        return nullptr;
     }
     status = cadt_string_append_n(str, data, length);
     if (status != CADT_OK) {
         cadt_string_destroy(str);
-        return NULL;
+        return nullptr;
     }
     return str;
 }
 
 cadt_string *cadt_string_create_cstr(const char *cstr, const cadt_allocator *alloc)
 {
-    if (cstr == NULL) {
-        return NULL;
+    if (cstr == nullptr) {
+        return nullptr;
     }
     return cadt_string_create_n(cstr, strlen(cstr), alloc);
 }
 
 void cadt_string_destroy(cadt_string *str)
 {
-    if (str == NULL) {
+    if (str == nullptr) {
         return;
     }
     cadt_xfree(str->alloc, str->data);
@@ -106,12 +106,12 @@ void cadt_string_destroy(cadt_string *str)
 
 size_t cadt_string_size(const cadt_string *str)
 {
-    return str == NULL ? 0 : str->size;
+    return str == nullptr ? 0 : str->size;
 }
 
 size_t cadt_string_capacity(const cadt_string *str)
 {
-    return str == NULL ? 0 : str->capacity;
+    return str == nullptr ? 0 : str->capacity;
 }
 
 bool cadt_string_empty(const cadt_string *str)
@@ -121,17 +121,17 @@ bool cadt_string_empty(const cadt_string *str)
 
 const char *cadt_string_c_str(const cadt_string *str)
 {
-    return str == NULL ? NULL : str->data;
+    return str == nullptr ? nullptr : str->data;
 }
 
 char *cadt_string_data(cadt_string *str)
 {
-    return str == NULL ? NULL : str->data;
+    return str == nullptr ? nullptr : str->data;
 }
 
 cadt_status cadt_string_reserve(cadt_string *str, size_t capacity)
 {
-    if (str == NULL) {
+    if (str == nullptr) {
         return CADT_ERR_INVALID;
     }
     return ensure_chars(str, capacity);
@@ -143,7 +143,7 @@ cadt_status cadt_string_shrink_to_fit(cadt_string *str)
     size_t new_bytes;
     char *fresh;
 
-    if (str == NULL) {
+    if (str == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (str->capacity == str->size) {
@@ -154,7 +154,7 @@ cadt_status cadt_string_shrink_to_fit(cadt_string *str)
         return CADT_ERR_OVERFLOW;
     }
     fresh = (char *)cadt_xrealloc(str->alloc, str->data, old_bytes, new_bytes);
-    if (fresh == NULL) {
+    if (fresh == nullptr) {
         return CADT_ERR_NOMEM;
     }
     str->data = fresh;
@@ -164,7 +164,7 @@ cadt_status cadt_string_shrink_to_fit(cadt_string *str)
 
 void cadt_string_clear(cadt_string *str)
 {
-    if (str == NULL) {
+    if (str == nullptr) {
         return;
     }
     str->size = 0;
@@ -174,16 +174,16 @@ void cadt_string_clear(cadt_string *str)
 cadt_status cadt_string_assign_n(cadt_string *str, const char *data, size_t length)
 {
     int inside;
-    char *tmp = NULL;
+    char *tmp = nullptr;
     cadt_status status;
 
-    if (str == NULL || (data == NULL && length > 0)) {
+    if (str == nullptr || (data == nullptr && length > 0)) {
         return CADT_ERR_INVALID;
     }
-    inside = data != NULL && data >= str->data && data <= str->data + str->size;
+    inside = data != nullptr && data >= str->data && data <= str->data + str->size;
     if (inside) {
         tmp = (char *)cadt_xalloc(str->alloc, length == 0 ? 1u : length);
-        if (tmp == NULL) {
+        if (tmp == nullptr) {
             return CADT_ERR_NOMEM;
         }
         if (length > 0) {
@@ -212,7 +212,7 @@ cadt_status cadt_string_append_n(cadt_string *str, const char *data, size_t leng
     size_t offset = 0;
     cadt_status status;
 
-    if (str == NULL || (data == NULL && length > 0)) {
+    if (str == nullptr || (data == nullptr && length > 0)) {
         return CADT_ERR_INVALID;
     }
     if (length == 0) {
@@ -240,7 +240,7 @@ cadt_status cadt_string_append_n(cadt_string *str, const char *data, size_t leng
 
 cadt_status cadt_string_append_cstr(cadt_string *str, const char *cstr)
 {
-    if (cstr == NULL) {
+    if (cstr == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_string_append_n(str, cstr, strlen(cstr));
@@ -253,7 +253,7 @@ cadt_status cadt_string_append_char(cadt_string *str, char ch)
 
 cadt_status cadt_string_append(cadt_string *str, const cadt_string *other)
 {
-    if (other == NULL) {
+    if (other == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_string_append_n(str, other->data, other->size);
@@ -267,7 +267,7 @@ cadt_status cadt_string_insert_n(cadt_string *str, size_t index, const char *dat
     size_t offset = 0;
     cadt_status status;
 
-    if (str == NULL || (data == NULL && length > 0)) {
+    if (str == nullptr || (data == nullptr && length > 0)) {
         return CADT_ERR_INVALID;
     }
     if (index > str->size) {
@@ -302,7 +302,7 @@ cadt_status cadt_string_insert_n(cadt_string *str, size_t index, const char *dat
 
 cadt_status cadt_string_erase(cadt_string *str, size_t index, size_t count)
 {
-    if (str == NULL) {
+    if (str == nullptr) {
         return CADT_ERR_INVALID;
     }
     if (index > str->size) {
@@ -324,10 +324,10 @@ int cadt_string_compare(const cadt_string *a, const cadt_string *b)
     if (a == b) {
         return 0;
     }
-    if (a == NULL) {
+    if (a == nullptr) {
         return -1;
     }
-    if (b == NULL) {
+    if (b == nullptr) {
         return 1;
     }
     n = a->size < b->size ? a->size : b->size;
@@ -347,7 +347,7 @@ bool cadt_string_equals_cstr(const cadt_string *str, const char *cstr)
 {
     size_t n;
 
-    if (str == NULL || cstr == NULL) {
+    if (str == nullptr || cstr == nullptr) {
         return false;
     }
     n = strlen(cstr);
@@ -358,7 +358,7 @@ bool cadt_string_starts_with(const cadt_string *str, const char *prefix)
 {
     size_t n;
 
-    if (str == NULL || prefix == NULL) {
+    if (str == nullptr || prefix == nullptr) {
         return false;
     }
     n = strlen(prefix);
@@ -369,7 +369,7 @@ bool cadt_string_ends_with(const cadt_string *str, const char *suffix)
 {
     size_t n;
 
-    if (str == NULL || suffix == NULL) {
+    if (str == nullptr || suffix == nullptr) {
         return false;
     }
     n = strlen(suffix);
@@ -380,7 +380,7 @@ size_t cadt_string_find_n(const cadt_string *str, const char *needle, size_t nee
 {
     size_t i;
 
-    if (str == NULL || (needle == NULL && needle_len > 0)) {
+    if (str == nullptr || (needle == nullptr && needle_len > 0)) {
         return CADT_NPOS;
     }
     if (needle_len == 0) {
@@ -399,7 +399,7 @@ size_t cadt_string_find_n(const cadt_string *str, const char *needle, size_t nee
 
 size_t cadt_string_find_cstr(const cadt_string *str, const char *needle)
 {
-    if (needle == NULL) {
+    if (needle == nullptr) {
         return CADT_NPOS;
     }
     return cadt_string_find_n(str, needle, strlen(needle));
@@ -407,13 +407,13 @@ size_t cadt_string_find_cstr(const cadt_string *str, const char *needle)
 
 cadt_string *cadt_string_substr(const cadt_string *str, size_t index, size_t count)
 {
-    if (str == NULL || index > str->size) {
-        return NULL;
+    if (str == nullptr || index > str->size) {
+        return nullptr;
     }
     if (count == CADT_NPOS) {
         count = str->size - index;
     } else if (count > str->size - index) {
-        return NULL;
+        return nullptr;
     }
     return cadt_string_create_n(str->data + index, count, str->alloc);
 }

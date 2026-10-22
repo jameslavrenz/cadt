@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  *
  * Hash set and multiset (std::unordered_set, std::unordered_multiset).
- * Separate chaining. A NULL hash function hashes the raw key bytes.
- * A NULL compare treats equal bytes as equal keys.
+ * Separate chaining. A nullptr hash function hashes the raw key bytes.
+ * A nullptr compare treats equal bytes as equal keys.
  * Rehash invalidates iterators and element pointers.
  */
 #ifndef CADT_UNORDERED_SET_H

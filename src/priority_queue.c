@@ -78,31 +78,31 @@ cadt_pqueue *cadt_pqueue_create(const cadt_type *type, bool max_heap,
 {
     cadt_pqueue *pq;
 
-    if (cadt_type_check(type) != CADT_OK || type->compare == NULL) {
-        return NULL;
+    if (cadt_type_check(type) != CADT_OK || type->compare == nullptr) {
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     pq = (cadt_pqueue *)cadt_xalloc(alloc, sizeof(*pq));
-    if (pq == NULL) {
-        return NULL;
+    if (pq == nullptr) {
+        return nullptr;
     }
     pq->alloc = alloc;
     pq->type = *type;
     pq->max_heap = max_heap;
     pq->data = cadt_vector_create(type, alloc);
     pq->scratch = (unsigned char *)cadt_xalloc(alloc, type->size);
-    if (pq->data == NULL || pq->scratch == NULL) {
+    if (pq->data == nullptr || pq->scratch == nullptr) {
         cadt_vector_destroy(pq->data);
         cadt_xfree(alloc, pq->scratch);
         cadt_xfree(alloc, pq);
-        return NULL;
+        return nullptr;
     }
     return pq;
 }
 
 void cadt_pqueue_destroy(cadt_pqueue *pq)
 {
-    if (pq == NULL) {
+    if (pq == nullptr) {
         return;
     }
     cadt_vector_destroy(pq->data);
@@ -112,7 +112,7 @@ void cadt_pqueue_destroy(cadt_pqueue *pq)
 
 size_t cadt_pqueue_size(const cadt_pqueue *pq)
 {
-    return pq == NULL ? 0 : cadt_vector_size(pq->data);
+    return pq == nullptr ? 0 : cadt_vector_size(pq->data);
 }
 
 bool cadt_pqueue_empty(const cadt_pqueue *pq)
@@ -122,14 +122,14 @@ bool cadt_pqueue_empty(const cadt_pqueue *pq)
 
 void cadt_pqueue_clear(cadt_pqueue *pq)
 {
-    if (pq != NULL) {
+    if (pq != nullptr) {
         cadt_vector_clear(pq->data);
     }
 }
 
 void *cadt_pqueue_top(const cadt_pqueue *pq)
 {
-    return pq == NULL ? NULL : cadt_vector_at(pq->data, 0);
+    return pq == nullptr ? nullptr : cadt_vector_at(pq->data, 0);
 }
 
 cadt_status cadt_pqueue_push(cadt_pqueue *pq, const void *elem)
@@ -137,7 +137,7 @@ cadt_status cadt_pqueue_push(cadt_pqueue *pq, const void *elem)
     cadt_status status;
     size_t index;
 
-    if (pq == NULL) {
+    if (pq == nullptr) {
         return CADT_ERR_INVALID;
     }
     status = cadt_vector_push_back(pq->data, elem);
@@ -155,7 +155,7 @@ cadt_status cadt_pqueue_pop(cadt_pqueue *pq, void *out)
     void *top;
     cadt_status status;
 
-    if (pq == NULL) {
+    if (pq == nullptr) {
         return CADT_ERR_INVALID;
     }
     size = cadt_vector_size(pq->data);
@@ -166,7 +166,7 @@ cadt_status cadt_pqueue_pop(cadt_pqueue *pq, void *out)
         return cadt_vector_pop_back(pq->data, out);
     }
     top = cadt_vector_at(pq->data, 0);
-    if (out != NULL) {
+    if (out != nullptr) {
         memcpy(out, top, pq->type.size);
     } else {
         cadt_type_destroy(&pq->type, top);

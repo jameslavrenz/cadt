@@ -17,12 +17,12 @@ static cadt_uset *create_set(const cadt_type *key, bool multi, const cadt_alloca
     cadt_hash_cfg cfg;
 
     if (cadt_type_check(key) != CADT_OK) {
-        return NULL;
+        return nullptr;
     }
     alloc = cadt_alloc_or_default(alloc);
     set = (cadt_uset *)cadt_xalloc(alloc, sizeof(*set));
-    if (set == NULL) {
-        return NULL;
+    if (set == nullptr) {
+        return nullptr;
     }
     memset(&cfg, 0, sizeof(cfg));
     cfg.elem = *key;
@@ -34,9 +34,9 @@ static cadt_uset *create_set(const cadt_type *key, bool multi, const cadt_alloca
     cfg.multi = multi;
     set->alloc = alloc;
     set->table = cadt_hash_create(&cfg, alloc);
-    if (set->table == NULL) {
+    if (set->table == nullptr) {
         cadt_xfree(alloc, set);
-        return NULL;
+        return nullptr;
     }
     return set;
 }
@@ -73,7 +73,7 @@ cadt_uset *cadt_umultiset_create(const cadt_type *key, const cadt_allocator *all
 
 void cadt_uset_destroy(cadt_uset *set)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return;
     }
     cadt_hash_destroy(set->table);
@@ -82,12 +82,12 @@ void cadt_uset_destroy(cadt_uset *set)
 
 size_t cadt_uset_size(const cadt_uset *set)
 {
-    return set == NULL ? 0 : cadt_hash_size(set->table);
+    return set == nullptr ? 0 : cadt_hash_size(set->table);
 }
 
 size_t cadt_uset_bucket_count(const cadt_uset *set)
 {
-    return set == NULL ? 0 : cadt_hash_buckets(set->table);
+    return set == nullptr ? 0 : cadt_hash_buckets(set->table);
 }
 
 bool cadt_uset_empty(const cadt_uset *set)
@@ -97,19 +97,19 @@ bool cadt_uset_empty(const cadt_uset *set)
 
 bool cadt_uset_is_multi(const cadt_uset *set)
 {
-    return set != NULL && cadt_hash_is_multi(set->table);
+    return set != nullptr && cadt_hash_is_multi(set->table);
 }
 
 void cadt_uset_clear(cadt_uset *set)
 {
-    if (set != NULL) {
+    if (set != nullptr) {
         cadt_hash_clear(set->table);
     }
 }
 
 cadt_status cadt_uset_insert(cadt_uset *set, const void *key)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_hash_insert(set->table, key);
@@ -117,36 +117,36 @@ cadt_status cadt_uset_insert(cadt_uset *set, const void *key)
 
 size_t cadt_uset_erase(cadt_uset *set, const void *key)
 {
-    return set == NULL ? 0 : cadt_hash_erase(set->table, key);
+    return set == nullptr ? 0 : cadt_hash_erase(set->table, key);
 }
 
 bool cadt_uset_contains(const cadt_uset *set, const void *key)
 {
-    return cadt_uset_find(set, key) != NULL;
+    return cadt_uset_find(set, key) != nullptr;
 }
 
 size_t cadt_uset_count(const cadt_uset *set, const void *key)
 {
-    return set == NULL ? 0 : cadt_hash_count(set->table, key);
+    return set == nullptr ? 0 : cadt_hash_count(set->table, key);
 }
 
 void *cadt_uset_find(const cadt_uset *set, const void *key)
 {
-    return set == NULL ? NULL : cadt_hash_find(set->table, key);
+    return set == nullptr ? nullptr : cadt_hash_find(set->table, key);
 }
 
 cadt_uset_iter cadt_uset_begin(const cadt_uset *set)
 {
-    if (set == NULL) {
-        return from_hash(cadt_hash_begin(NULL));
+    if (set == nullptr) {
+        return from_hash(cadt_hash_begin(nullptr));
     }
     return from_hash(cadt_hash_begin(set->table));
 }
 
 cadt_uset_iter cadt_uset_end(const cadt_uset *set)
 {
-    if (set == NULL) {
-        return from_hash(cadt_hash_end(NULL));
+    if (set == nullptr) {
+        return from_hash(cadt_hash_end(nullptr));
     }
     return from_hash(cadt_hash_end(set->table));
 }
@@ -158,7 +158,7 @@ cadt_uset_iter cadt_uset_next(cadt_uset_iter it)
 
 bool cadt_uset_iter_eq(cadt_uset_iter a, cadt_uset_iter b)
 {
-    if (a.node == NULL && b.node == NULL) {
+    if (a.node == nullptr && b.node == nullptr) {
         return true;
     }
     return a.node == b.node;
@@ -171,7 +171,7 @@ void *cadt_uset_iter_data(cadt_uset_iter it)
 
 cadt_status cadt_uset_validate(const cadt_uset *set)
 {
-    if (set == NULL) {
+    if (set == nullptr) {
         return CADT_ERR_INVALID;
     }
     return cadt_hash_validate(set->table);

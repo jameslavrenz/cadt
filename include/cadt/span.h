@@ -18,10 +18,10 @@ typedef struct cadt_span {
     size_t elem_size;
 } cadt_span;
 
-/* data may be NULL when size is 0. elem_size must be non-zero. */
+/* data may be nullptr when size is 0. elem_size must be non-zero. */
 cadt_span cadt_span_make(void *data, size_t size, size_t elem_size);
 
-/* NULL when index is out of range or the span is empty. */
+/* nullptr when index is out of range or the span is empty. */
 void *cadt_span_at(cadt_span span, size_t index);
 
 /*
